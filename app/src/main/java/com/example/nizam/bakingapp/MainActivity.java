@@ -4,7 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,6 +17,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -29,8 +35,15 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
+import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -57,14 +70,25 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         bakingArrayList = new ArrayList<>();
+        SwipeRefreshLayout mProgressBar ;
+
+        mProgressBar = (SwipeRefreshLayout) findViewById(R.id.progress);
 
         BakingDBHelper bakingDBHelper = new BakingDBHelper(this);
         mBakingDB = bakingDBHelper.getWritableDatabase();
 
-        FetchBakingTask bakingTask = new FetchBakingTask();
-        bakingTask.execute();
+        mProgressBar.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                FetchBakingTask bakingTask = new FetchBakingTask();
+                bakingTask.execute();
+            }
+        });
+
 
     }
+
+
 
     private Cursor getBaking() {
         return mBakingDB.query(
@@ -77,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 null
         );
     }
+
 
 
     private Cursor getBakingIng() {
@@ -116,16 +141,16 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(JSONArray response) {
-                            Log.d(TAG, response.toString());
+                    Log.d(TAG, response.toString());
                     try {
 //                              JSONArray responseBundle = response.getJSONArray();
                         System.out.println(" inside try");
 //                        JSONArray responseBundle = response.getJSONArray();
-                        System.out.println(" response is : "+response.toString());
-                        System.out.println(" response is : "+response.length());
+                        System.out.println(" response is : " + response.toString());
+                        System.out.println(" response is : " + response.length());
                         for (int j = 0; j < response.length(); j++) {
                             JSONObject c = response.getJSONObject(j);
-                            System.out.println(" jsonobject : "+c.toString());
+                            System.out.println(" jsonobject : " + c.toString());
                             bakingId = c.getString("id");
                             bakingName = c.getString("name");
                             JSONArray bakingIngredients = c.getJSONArray("ingredients");
@@ -156,17 +181,17 @@ public class MainActivity extends AppCompatActivity {
 
                             for (int k = 0; k < bakingIngredients.length(); k++) {
                                 JSONObject ing = bakingIngredients.getJSONObject(k);
-                                System.out.println(" ing is : "+ing.toString());
+                                System.out.println(" ing is : " + ing.toString());
                                 BakingIngredients bakingIngredientsObj = new BakingIngredients();
                                 bakingIngredientsObj.setIngredient(ing.getString("quantity"));
                                 bakingIngredientsObj.setMeasure(ing.getString("measure"));
                                 bakingIngredientsObj.setIngredient(ing.getString("ingredient"));
 
                                 ContentValues cv1 = new ContentValues();
-                                System.out.println("bakingId :  "+bakingId);
-                                System.out.println(" ing.getString(\"quantity\") :  "+ ing.getString("quantity"));
-                                System.out.println("ing.getString(\"measure\") :  "+ing.getString("measure"));
-                                System.out.println(" ing.getString(\"ingredient\") :  "+ ing.getString("ingredient"));
+                                System.out.println("bakingId :  " + bakingId);
+                                System.out.println(" ing.getString(\"quantity\") :  " + ing.getString("quantity"));
+                                System.out.println("ing.getString(\"measure\") :  " + ing.getString("measure"));
+                                System.out.println(" ing.getString(\"ingredient\") :  " + ing.getString("ingredient"));
                                 cv1.put(BakingContract.BakingEntry.COLUMN_BAKING_ID, bakingId);
                                 cv1.put(BakingContract.BakingEntry.COLUMN_BAKING_QUANTITY, ing.getString("quantity"));
                                 cv1.put(BakingContract.BakingEntry.COLUMN_BAKING_MEASURE, ing.getString("measure"));
@@ -194,14 +219,24 @@ public class MainActivity extends AppCompatActivity {
                                 cv2.put(BakingContract.BakingEntry.COLUMN_BAKING_VIDEOURL, steps.getString("videoURL"));
                                 cv2.put(BakingContract.BakingEntry.COLUMN_BAKING_THUMBNAILURL, steps.getString("thumbnailURL"));
                                 mBakingDB.insert(BakingContract.BakingEntry.BAKING_STEPS_TABLE, null, cv2);
-                                System.out.println("Value inserted in Baking Ingredient DB ");
+                                System.out.println("Value inserted in Baking STEPS DB ");
+
+                                bakingImage = steps.getString("videoURL");
                             }
+                            ContentValues cv3 = new ContentValues();
+                            System.out.println("steps.getString(\"videoURL\") : "+bakingImage);
+                            cv3.put(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE, bakingImage);
+                            String whereArgs[] = {bakingId};
+                            mBakingDB.update(BakingContract.BakingEntry.BAKING_TABLE, cv3, "baking_id=?", whereArgs);
+                            System.out.println("Value updated in Baking Main DB for video URL ");
 //                            baking.setBakingSteps(bakingStepsObj);
                             bakingArrayList.add(baking);
                         }
 
                     } catch (JSONException e) {
                         Log.e(TAG, "Json parsing error: " + e.getMessage());
+                    } catch (Throwable throwable) {
+                        throwable.printStackTrace();
                     }
                     Cursor cBaking = getBaking();
                     receipeAdapter = new ReceipeAdapter(context, cBaking);
@@ -239,5 +274,37 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         }
+
+        public byte[] retriveVideoFrameFromVideo(String videoPath)
+                throws Throwable {
+            Bitmap bitmap = null;
+            MediaMetadataRetriever mediaMetadataRetriever = null;
+            try {
+                System.out.println("inside retieve video method");
+                mediaMetadataRetriever = new MediaMetadataRetriever();
+                if (Build.VERSION.SDK_INT >= 14) {
+                    mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());
+                } else {
+                    mediaMetadataRetriever.setDataSource(videoPath);
+                }
+                bitmap = mediaMetadataRetriever.getFrameAtTime();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Throwable(
+                        "Exception in retriveVideoFrameFromVideo(String videoPath)"
+                                + e.getMessage());
+
+            } finally {
+                if (mediaMetadataRetriever != null) {
+                    mediaMetadataRetriever.release();
+                }
+            }
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 10, stream);
+            byte[] byteArray = stream.toByteArray();
+            return byteArray;
+        }
+
     }
 }
