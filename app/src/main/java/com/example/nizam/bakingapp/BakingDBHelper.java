@@ -17,7 +17,7 @@ public class BakingDBHelper extends SQLiteOpenHelper {
             BakingContract.BakingEntry.COLUMN_BAKING_ID + " INTEGER NOT NULL,  " +
             BakingContract.BakingEntry.COLUMN_BAKING_NAME + " INTEGER NOT NULL,  " +
             BakingContract.BakingEntry.COLUMN_SERVINGS + " INTEGER NOT NULL,  " +
-            BakingContract.BakingEntry.COLUMN_BAKING_IMAGE + " INTEGER NOT NULL,  " +
+            BakingContract.BakingEntry.COLUMN_BAKING_IMAGE + " BLOB,  " +
             " UNIQUE (" + BakingContract.BakingEntry.COLUMN_BAKING_ID + ") ON CONFLICT REPLACE);";
 
     final String SQL_CREATE_BAKING_ING_TABLE = "CREATE TABLE IF NOT EXISTS " + BakingContract.BakingEntry.BAKING_INGREDIENT_TABLE + " (" +

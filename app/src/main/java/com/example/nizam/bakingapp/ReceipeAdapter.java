@@ -2,12 +2,6 @@ package com.example.nizam.bakingapp;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,13 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 /**
  * Created by Nizam on 07-Nov-2017 007.
@@ -49,62 +37,61 @@ public class ReceipeAdapter extends RecyclerView.Adapter<ReceipeAdapter.ReceipeV
     public void onBindViewHolder(ReceipeAdapter.ReceipeViewHolder holder, int position) {
         bakingCursor.moveToPosition(position);
         ImageView im = holder.bakingImage;
+//        Bitmap bmThumbnail = null;
         holder.bakingItemName.setText(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_NAME)));
-        System.out.println(" Image Url is : " + bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)));
 
-//        Uri uri = Uri.fromFile(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)));
-//        Bitmap bmThumbnail = ThumbnailUtils.createVideoThumbnail(, MediaStore.Video.Thumbnails.FULL_SCREEN_KIND);
-        Bitmap bmThumbnail = null;
-        try {
-            bmThumbnail = retriveVideoFrameFromVideo(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)));
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bmThumbnail.compress(Bitmap.CompressFormat.PNG,100,stream);
+
+//        new Thread(new Runnable() {
+//            public void run() {
+//        byte[] bm = bakingCursor.getBlob(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE));
+//        Bitmap bmThumbnail = null;
+//        bmThumbnail = BitmapFactory.decodeByteArray(bm, 0, bm.length);
+//        try {
+//            bmThumbnail = retriveVideoFrameFromVideo(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)));
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bmThumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
         Glide.with(rContext)
-                .load(stream.toByteArray())
+                .load(bakingCursor.getBlob(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)))
                 .placeholder(R.mipmap.ic_launcher)
-                .into(holder.bakingImage);
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .thumbnail(0.5f)
+                .into(im);
+        //            }
+//        }).start();
 
 
     }
 
-    private byte[] bitmapToByte(Bitmap bitmap) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
-    }
-
-    public static Bitmap retriveVideoFrameFromVideo(String videoPath)
-            throws Throwable {
-        Bitmap bitmap = null;
-        MediaMetadataRetriever mediaMetadataRetriever = null;
-        try {
-            System.out.println("inside retieve video method");
-            mediaMetadataRetriever = new MediaMetadataRetriever();
-            if (Build.VERSION.SDK_INT >= 14) {
-                mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());
-            }
-            else {
-                mediaMetadataRetriever.setDataSource(videoPath);
-            }
-            bitmap = mediaMetadataRetriever.getFrameAtTime();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Throwable(
-                    "Exception in retriveVideoFrameFromVideo(String videoPath)"
-                            + e.getMessage());
-
-        } finally {
-            if (mediaMetadataRetriever != null) {
-                mediaMetadataRetriever.release();
-            }
-        }
-        return bitmap;
-    }
-
+//    public static Bitmap retriveVideoFrameFromVideo(String videoPath)
+//            throws Throwable {
+//        Bitmap bitmap = null;
+//        MediaMetadataRetriever mediaMetadataRetriever = null;
+//        try {
+//            System.out.println("inside retieve video method");
+//            mediaMetadataRetriever = new MediaMetadataRetriever();
+//            if (Build.VERSION.SDK_INT >= 14) {
+//                mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());
+//            } else {
+//                mediaMetadataRetriever.setDataSource(videoPath);
+//            }
+//            bitmap = mediaMetadataRetriever.getFrameAtTime();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new Throwable(
+//                    "Exception in retriveVideoFrameFromVideo(String videoPath)"
+//                            + e.getMessage());
+//
+//        } finally {
+//            if (mediaMetadataRetriever != null) {
+//                mediaMetadataRetriever.release();
+//            }
+//        }
+//        return bitmap;
+//    }
 
 
     @Override

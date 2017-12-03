@@ -8,38 +8,29 @@ import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.FileDescriptorBitmapDecoder;
-import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -57,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase mBakingDB;
     ReceipeAdapter receipeAdapter;
     Context context;
-
+    ProgressBar mRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,25 +61,19 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         bakingArrayList = new ArrayList<>();
-        SwipeRefreshLayout mProgressBar ;
 
-        mProgressBar = (SwipeRefreshLayout) findViewById(R.id.progress);
+        mRefresh = findViewById(R.id.progressBar);
 
+        recyclerView.setVisibility(View.INVISIBLE);
+        mRefresh.setVisibility(View.VISIBLE);
         BakingDBHelper bakingDBHelper = new BakingDBHelper(this);
         mBakingDB = bakingDBHelper.getWritableDatabase();
 
-        mProgressBar.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                FetchBakingTask bakingTask = new FetchBakingTask();
-                bakingTask.execute();
-            }
-        });
+        FetchBakingTask bakingTask = new FetchBakingTask();
+        bakingTask.execute();
 
 
     }
-
-
 
     private Cursor getBaking() {
         return mBakingDB.query(
@@ -101,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 null
         );
     }
-
 
 
     private Cursor getBakingIng() {
@@ -136,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(" inside do in bg ");
             final String BAKING_BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
-//            JsonArrayRequest req = new JsonArrayRequest(BAKING_BASE_URL, new Response.Listener<JSONArray>() {
             JsonArrayRequest req = new JsonArrayRequest(BAKING_BASE_URL, new Response.Listener<JSONArray>() {
 
                 @Override
@@ -201,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
 //                                baking.setBakingIngredients(bakingIngredientsObj);
                             }
 
-
                             for (int h = 0; h < bakingSteps.length(); h++) {
                                 JSONObject steps = bakingSteps.getJSONObject(h);
                                 BakingSteps bakingStepsObj = new BakingSteps();
@@ -223,28 +205,50 @@ public class MainActivity extends AppCompatActivity {
 
                                 bakingImage = steps.getString("videoURL");
                             }
-                            ContentValues cv3 = new ContentValues();
-                            System.out.println("steps.getString(\"videoURL\") : "+bakingImage);
-                            cv3.put(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE, bakingImage);
-                            String whereArgs[] = {bakingId};
-                            mBakingDB.update(BakingContract.BakingEntry.BAKING_TABLE, cv3, "baking_id=?", whereArgs);
-                            System.out.println("Value updated in Baking Main DB for video URL ");
+
+                            System.out.println("steps.getString(\"videoURL\") : " + bakingImage);
+
+//                        new Thread(new Runnable() {
+//                            public void run() {
+                            Bitmap bmThumbnail = null;
+                            try {
+                                ContentValues cv3 = new ContentValues();
+                                bmThumbnail = retriveVideoFrameFromVideo(bakingImage);
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                bmThumbnail.compress(Bitmap.CompressFormat.PNG, 10, stream);
+                                cv3.put(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE, stream.toByteArray());
+                                String whereArgs[] = {bakingId};
+                                mBakingDB.update(BakingContract.BakingEntry.BAKING_TABLE, cv3, "baking_id=?", whereArgs);
+                                System.out.println("Value updated in Baking Main DB for video URL ");
 //                            baking.setBakingSteps(bakingStepsObj);
-                            bakingArrayList.add(baking);
+                                bakingArrayList.add(baking);
+                            } catch (Throwable throwable) {
+                                throwable.printStackTrace();
+                            }
+//                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                                bmThumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+//                            }
+//                        }).start();
+
+
                         }
 
                     } catch (JSONException e) {
                         Log.e(TAG, "Json parsing error: " + e.getMessage());
-                    } catch (Throwable throwable) {
-                        throwable.printStackTrace();
                     }
+
                     Cursor cBaking = getBaking();
                     receipeAdapter = new ReceipeAdapter(context, cBaking);
                     recyclerView.setAdapter(receipeAdapter);
                     System.out.println(" after settings adapter");
+
+                    receipeAdapter.notifyDataSetChanged();
+                    mRefresh.setVisibility(View.INVISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
                     Toast toast = Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG);
                     toast.show();
-                    receipeAdapter.notifyDataSetChanged();
+                    System.out.println("after toast");
                 }
             }, new Response.ErrorListener() {
 
@@ -275,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
-        public byte[] retriveVideoFrameFromVideo(String videoPath)
+        public synchronized Bitmap retriveVideoFrameFromVideo(String videoPath)
                 throws Throwable {
             Bitmap bitmap = null;
             MediaMetadataRetriever mediaMetadataRetriever = null;
@@ -299,11 +303,7 @@ public class MainActivity extends AppCompatActivity {
                     mediaMetadataRetriever.release();
                 }
             }
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 10, stream);
-            byte[] byteArray = stream.toByteArray();
-            return byteArray;
+            return bitmap;
         }
 
     }
