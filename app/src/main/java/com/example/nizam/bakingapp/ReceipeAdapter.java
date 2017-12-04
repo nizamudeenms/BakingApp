@@ -55,9 +55,9 @@ public class ReceipeAdapter extends RecyclerView.Adapter<ReceipeAdapter.ReceipeV
 //        bmThumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
         Glide.with(rContext)
                 .load(bakingCursor.getBlob(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)))
+                .asBitmap()
                 .placeholder(R.mipmap.ic_launcher)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
                 .thumbnail(0.5f)
                 .into(im);
         //            }
