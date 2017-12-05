@@ -37,6 +37,7 @@ public class ReceipeAdapter extends RecyclerView.Adapter<ReceipeAdapter.ReceipeV
     public void onBindViewHolder(ReceipeAdapter.ReceipeViewHolder holder, int position) {
         bakingCursor.moveToPosition(position);
         ImageView im = holder.bakingImage;
+        String imageName = null;
 //        Bitmap bmThumbnail = null;
         holder.bakingItemName.setText(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_NAME)));
 
@@ -53,8 +54,15 @@ public class ReceipeAdapter extends RecyclerView.Adapter<ReceipeAdapter.ReceipeV
 //        }
 //        ByteArrayOutputStream stream = new ByteArrayOutputStream();
 //        bmThumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+        imageName = "id" + bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_ID));
+        System.out.println("baking id : " + imageName);
+//        Uri  img = Uri.parse("R.mipmap."+imageName);
+//        System.out.println(img);
+        System.out.println(rContext.getPackageName());
+
         Glide.with(rContext)
-                .load(bakingCursor.getBlob(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)))
+                .load(rContext.getResources().getIdentifier(imageName, "mipmap", rContext.getPackageName()))
                 .placeholder(R.mipmap.ic_launcher)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()

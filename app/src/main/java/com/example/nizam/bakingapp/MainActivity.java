@@ -2,6 +2,8 @@ package com.example.nizam.bakingapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -9,6 +11,7 @@ import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -32,7 +35,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,11 +51,18 @@ public class MainActivity extends AppCompatActivity {
     ReceipeAdapter receipeAdapter;
     Context context;
     ProgressBar mRefresh;
+    boolean isAppInstalled = false;
+    public SharedPreferences appPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isAppInstalled = appPreferences.getBoolean("isAppInstalled",false);
+        installShortcut(isAppInstalled);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
@@ -100,6 +109,30 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+   private void installShortcut(Boolean isAppInstalled){
+
+        if(isAppInstalled==false){
+
+            //  create short code
+
+            Intent shortcutIntent = new Intent(getApplicationContext(),MainActivity.class);
+            shortcutIntent.setAction(Intent.ACTION_MAIN);
+            Intent intent = new Intent();
+            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Baking APP Udacity");
+            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource
+                    .fromContext(getApplicationContext(), R.mipmap.ic_launcher_round));
+            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            getApplicationContext().sendBroadcast(intent);
+
+            //Make preference true
+
+            SharedPreferences.Editor editor = appPreferences.edit();
+            editor.putBoolean("isAppInstalled", true);
+            editor.commit();
+        }
+
+    }
 
     private Cursor getBakingStep() {
         return mBakingDB.query(
@@ -210,21 +243,21 @@ public class MainActivity extends AppCompatActivity {
 
 //                        new Thread(new Runnable() {
 //                            public void run() {
-                            Bitmap bmThumbnail = null;
-                            try {
-                                ContentValues cv3 = new ContentValues();
-                                bmThumbnail = retriveVideoFrameFromVideo(bakingImage);
-                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                                bmThumbnail.compress(Bitmap.CompressFormat.PNG, 10, stream);
-                                cv3.put(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE, stream.toByteArray());
-                                String whereArgs[] = {bakingId};
-                                mBakingDB.update(BakingContract.BakingEntry.BAKING_TABLE, cv3, "baking_id=?", whereArgs);
-                                System.out.println("Value updated in Baking Main DB for video URL ");
-//                            baking.setBakingSteps(bakingStepsObj);
-                                bakingArrayList.add(baking);
-                            } catch (Throwable throwable) {
-                                throwable.printStackTrace();
-                            }
+//                            Bitmap bmThumbnail = null;
+//                            try {
+//                                ContentValues cv3 = new ContentValues();
+////                                bmThumbnail = retriveVideoFrameFromVideo(bakingImage);
+//                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                                bmThumbnail.compress(Bitmap.CompressFormat.PNG, 10, stream);
+//                                cv3.put(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE, stream.toByteArray());
+//                                String whereArgs[] = {bakingId};
+//                                mBakingDB.update(BakingContract.BakingEntry.BAKING_TABLE, cv3, "baking_id=?", whereArgs);
+//                                System.out.println("Value updated in Baking Main DB for video URL ");
+////                            baking.setBakingSteps(bakingStepsObj);
+//                                bakingArrayList.add(baking);
+//                            } catch (Throwable throwable) {
+//                                throwable.printStackTrace();
+//                            }
 //                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
 //                                bmThumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
