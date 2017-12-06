@@ -40,7 +40,7 @@ public class ReceipeAdapter extends RecyclerView.Adapter<ReceipeAdapter.ReceipeV
         String imageName = null;
 //        Bitmap bmThumbnail = null;
         holder.bakingItemName.setText(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_NAME)));
-
+        holder.bakingServings.setText(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_SERVINGS)));
 
 //        new Thread(new Runnable() {
 //            public void run() {
@@ -111,6 +111,7 @@ public class ReceipeAdapter extends RecyclerView.Adapter<ReceipeAdapter.ReceipeV
     public class ReceipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public CardView cardView;
         TextView bakingItemName;
+        TextView bakingServings;
         ImageView bakingImage;
         Cursor bakingCursor;
         Context context;
@@ -120,8 +121,9 @@ public class ReceipeAdapter extends RecyclerView.Adapter<ReceipeAdapter.ReceipeV
             super(itemView);
             this.bakingCursor = bakingCursor;
             this.context = context;
-            bakingItemName = (TextView) itemView.findViewById(R.id.info_text);
-            bakingImage = (ImageView) itemView.findViewById(R.id.bakingImage);
+            bakingItemName = itemView.findViewById(R.id.info_text);
+            bakingImage = itemView.findViewById(R.id.bakingImage);
+            bakingServings = itemView.findViewById(R.id.servings);
         }
 
         @Override
