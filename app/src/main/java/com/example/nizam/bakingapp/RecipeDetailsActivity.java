@@ -10,6 +10,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
+        setTitle(getIntent().getStringExtra("bakingName"));
         TextView textView = findViewById(R.id.textView);
         String bakingId = getIntent().getStringExtra("bakingId");
         System.out.println("getIntent().getStringExtra(\"bakingId\").toString(): "+bakingId);
