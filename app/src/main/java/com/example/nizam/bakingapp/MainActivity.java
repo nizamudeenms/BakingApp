@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private String servings;
     private String bakingImage;
     private SQLiteDatabase mBakingDB;
-    ReceipeAdapter receipeAdapter;
+    BakingAdapter bakingAdapter;
     Context context;
     ProgressBar mRefresh;
     boolean isAppInstalled = false;
@@ -272,11 +272,11 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     Cursor cBaking = getBaking();
-                    receipeAdapter = new ReceipeAdapter(context, cBaking);
-                    recyclerView.setAdapter(receipeAdapter);
+                    bakingAdapter = new BakingAdapter(context, cBaking);
+                    recyclerView.setAdapter(bakingAdapter);
                     System.out.println(" after settings adapter");
 
-                    receipeAdapter.notifyDataSetChanged();
+                    bakingAdapter.notifyDataSetChanged();
                     mRefresh.setVisibility(View.INVISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);
                     Toast toast = Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG);
