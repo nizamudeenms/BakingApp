@@ -38,10 +38,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+public class BakingActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<Baking> bakingArrayList;
-    private String TAG = "MainActivity";
+    private String TAG = "BakingActivity";
 
     private String bakingId;
     private String bakingName;
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         isAppInstalled = appPreferences.getBoolean("isAppInstalled",false);
         installShortcut(isAppInstalled);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
             //  create short code
 
-            Intent shortcutIntent = new Intent(getApplicationContext(),MainActivity.class);
+            Intent shortcutIntent = new Intent(getApplicationContext(),BakingActivity.class);
             shortcutIntent.setAction(Intent.ACTION_MAIN);
             Intent intent = new Intent();
             intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
