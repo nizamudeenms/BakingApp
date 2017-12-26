@@ -220,11 +220,11 @@ public class BakingActivity extends AppCompatActivity {
                             for (int h = 0; h < bakingSteps.length(); h++) {
                                 JSONObject steps = bakingSteps.getJSONObject(h);
                                 BakingSteps bakingStepsObj = new BakingSteps();
-                                bakingStepsObj.setId(steps.getString("id"));
+                                bakingStepsObj.setStepId(steps.getString("id"));
                                 bakingStepsObj.setDesc(steps.getString("description"));
                                 bakingStepsObj.setShortDesc(steps.getString("shortDescription"));
                                 bakingStepsObj.setVideoUrl(steps.getString("videoURL"));
-                                bakingStepsObj.setThumnailUrl(steps.getString("thumbnailURL"));
+                                bakingStepsObj.setThumbnailUrl(steps.getString("thumbnailURL"));
 
                                 ContentValues cv2 = new ContentValues();
                                 cv2.put(BakingContract.BakingEntry.COLUMN_BAKING_ID, bakingId);

@@ -5,18 +5,27 @@ package com.example.nizam.bakingapp;
  */
 
 public class BakingSteps {
+    private String bakingId;
     private String stepId;
     private String shortDesc;
     private String desc;
     private String videoUrl;
     private String thumbnailUrl;
 
-    public String getId() {
+    public String getBakingId() {
+        return bakingId;
+    }
+
+    public void setBakingId(String bakingId) {
+        this.bakingId = bakingId;
+    }
+
+    public String getStepId() {
         return stepId;
     }
 
-    public void setId(String id) {
-        this.stepId = id;
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
     }
 
     public String getShortDesc() {
@@ -43,11 +52,11 @@ public class BakingSteps {
         this.videoUrl = videoUrl;
     }
 
-    public String getThumnailUrl() {
+    public String getThumbnailUrl() {
         return thumbnailUrl;
     }
 
-    public void setThumnailUrl(String thumnailUrl) {
-        this.thumbnailUrl = thumnailUrl;
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 }
