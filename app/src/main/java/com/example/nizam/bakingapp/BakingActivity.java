@@ -65,7 +65,8 @@ public class BakingActivity extends AppCompatActivity {
         installShortcut(isAppInstalled);
 
         recyclerView = findViewById(R.id.recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        System.out.println(" getResources().getInteger(R.integer.grid_number_cols)  : " + getResources().getInteger(R.integer.grid_number_cols));
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), getResources().getInteger(R.integer.grid_number_cols));
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);

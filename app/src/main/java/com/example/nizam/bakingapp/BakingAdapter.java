@@ -135,9 +135,13 @@ public class BakingAdapter extends RecyclerView.Adapter<BakingAdapter.RecipeView
             System.out.println("position; " + position);
             bakingCursor.moveToPosition(position);
             System.out.println("bakingId : " + bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_ID));
-            Intent intent = new Intent(context, RecipeDetailsActivity.class);
+            Intent intent = new Intent(context, RecipeStepsActivity.class);
             intent.putExtra("bakingId", bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_ID)));
             intent.putExtra("bakingName", bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_NAME)));
+//            intent.putExtra("videoUrl", bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_VIDEOURL)));
+//            intent.putExtra("stepId", bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_STEP_ID)));
+//            intent.putExtra("shortDesc", bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_SHORT_DESC)));
+//            intent.putExtra("desc", bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_DESC)));
             context.startActivity(intent);
         }
     }
