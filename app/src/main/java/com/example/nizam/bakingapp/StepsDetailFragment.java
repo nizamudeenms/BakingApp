@@ -145,9 +145,18 @@ public class StepsDetailFragment extends Fragment {
 //        videoUrl = tempStepsArr.get(0).getVideoUrl();
 
         if ( !videoUrl.equals("nil") ) {
+            mShortdesc.setVisibility(View.VISIBLE);
+            mDesc.setVisibility(View.VISIBLE);
             initializePlayer(videoUrl);
         }else {
             simpleExoPlayerView.setVisibility(View.GONE);
+            if (!mShortdesc.getText().equals("nil")) {
+                mShortdesc.setVisibility(View.VISIBLE);
+                mDesc.setVisibility(View.VISIBLE);
+            }else{
+                mShortdesc.setVisibility(View.INVISIBLE);
+                mDesc.setVisibility(View.INVISIBLE);
+            }
         }
         return view;
     }
