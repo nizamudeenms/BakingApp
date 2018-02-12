@@ -11,6 +11,7 @@ import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -82,6 +83,13 @@ public class BakingActivity extends AppCompatActivity {
         FetchBakingTask bakingTask = new FetchBakingTask();
         bakingTask.execute();
 
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putParcelable("ListState", recyclerView.getLayoutManager().onSaveInstanceState());
 
     }
 

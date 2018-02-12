@@ -5,11 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
     String videoUrl;
     String shortDesc;
     String desc;
+//    SharedPreferences mSharedPreferences = getView().getSharedPreferences("stepsPref", Context.MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,4 +175,55 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
                 mBakingDB.close();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                onBackPressed();
+//                break;
+//            case R.id.menu_recipe:
+//                addIngredientToWidget(ingredientsArray);
+//                break;
+//        }
+        BakingAppWidgetUpdateService.startBakingService(getApplicationContext(),ingredientsArray);
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+//    public void addIngredientToWidget(ArrayList<String> ingredientsArray) {
+//
+//        ArrayList<String> ingredients = ingredientsArray;
+//        String recipeName = bakingName;
+//
+//
+//        mSharedPreferences.edit().putString("prefRec", recipeName).apply();
+//
+//
+//        int[] ids = AppWidgetManager.getInstance(getView().getApplication())
+//                .getAppWidgetIds(new ComponentName(getView().getApplication(), AppWidgetProvider.class));
+//        AppWidgetProvider ingredientWidget = new AppWidgetProvider();
+//        ingredientWidget.onUpdate(getView(), AppWidgetManager.getInstance(getView()), ids);
+//        Context context = getView().getApplicationContext();
+//        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+//        ComponentName thisWidget = new ComponentName(context, AppWidgetProvider.class);
+//        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+//        appWidgetManager.notifyAppWidgetViewDataChanged( , R.id.ing_widget_list);
+////        mView.showMessage("successfully added");
+//    }
+//
+//    @Override
+//    public Activity getView() {
+//        return (Activity) mView;
+//    }
+
 }

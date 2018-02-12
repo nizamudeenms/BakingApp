@@ -1,12 +1,10 @@
 package com.example.nizam.bakingapp;
 
 
-import android.content.Intent;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.DisplayMetrics;
 
 
 public class RecipeDetailsActivity extends FragmentActivity{
@@ -52,6 +50,7 @@ public class RecipeDetailsActivity extends FragmentActivity{
             fragmentTransaction2.commit();
         System.out.println(" after Details activity ");
 
+
 //
 //        }else{
 //
@@ -77,7 +76,5 @@ public class RecipeDetailsActivity extends FragmentActivity{
 //        fragmentManager.beginTransaction().add(R.id.fragment_container, mRecipeFragment).commit();
 
         }
-
-
 
 }

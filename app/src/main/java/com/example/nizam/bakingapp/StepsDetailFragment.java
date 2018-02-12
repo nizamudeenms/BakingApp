@@ -144,6 +144,7 @@ public class StepsDetailFragment extends Fragment {
 
 //        videoUrl = tempStepsArr.get(0).getVideoUrl();
 
+
         if ( !videoUrl.equals("nil") ) {
             mShortdesc.setVisibility(View.VISIBLE);
             mDesc.setVisibility(View.VISIBLE);
@@ -161,6 +162,12 @@ public class StepsDetailFragment extends Fragment {
         return view;
     }
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     private void initializePlayer(String videoUrl) {
 
@@ -243,5 +250,12 @@ public class StepsDetailFragment extends Fragment {
         player.prepare(mediaSource);
     }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (player!=null) {
+            player.stop();
+            player.release();
+        }
+    }
 }
