@@ -27,14 +27,18 @@
         <receiver android:name=".BakingAppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE2" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/baking_app_widget_info" />
         </receiver>
-        <service android:name=".BakingAppWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+        <service android:name=".BakingAppWidgetUpdateService" />
+
+        <service
+            android:name=".BakingAppWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

@@ -120,7 +120,7 @@ public class StepsFragment extends Fragment   {
             }
         });
 
-//        BakingAppWidgetUpdateService.startBakingService(getContext(),ingredientsArr);
+        BakingAppWidgetUpdateService.startBakingService(getContext(),ingredientsArr);
 
         return view;
     }
