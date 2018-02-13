@@ -39,8 +39,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class BakingActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+
+    @BindView(R.id.progressBar)
+    ProgressBar mRefresh;
+
     private ArrayList<Baking> bakingArrayList;
     private String TAG = "BakingActivity";
 
@@ -51,7 +59,7 @@ public class BakingActivity extends AppCompatActivity {
     private SQLiteDatabase mBakingDB;
     BakingAdapter bakingAdapter;
     Context context;
-    ProgressBar mRefresh;
+
     boolean isAppInstalled = false;
     public SharedPreferences appPreferences;
 
@@ -65,7 +73,9 @@ public class BakingActivity extends AppCompatActivity {
         isAppInstalled = appPreferences.getBoolean("isAppInstalled",false);
         installShortcut(isAppInstalled);
 
-        recyclerView = findViewById(R.id.recycler_view);
+//        recyclerView = findViewById(R.id.recycler_view);
+        ButterKnife.bind(this);
+
         System.out.println(" getResources().getInteger(R.integer.grid_number_cols)  : " + getResources().getInteger(R.integer.grid_number_cols));
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), getResources().getInteger(R.integer.grid_number_cols));
         recyclerView.setLayoutManager(mLayoutManager);
@@ -73,7 +83,7 @@ public class BakingActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         bakingArrayList = new ArrayList<>();
 
-        mRefresh = findViewById(R.id.progressBar);
+//        mRefresh = findViewById(R.id.progressBar);
 
         recyclerView.setVisibility(View.INVISIBLE);
         mRefresh.setVisibility(View.VISIBLE);

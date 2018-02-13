@@ -14,6 +14,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+
 /**
  * Created by Nizam on 07-Nov-2017 007.
  */
@@ -41,6 +45,7 @@ public class BakingAdapter extends RecyclerView.Adapter<BakingAdapter.RecipeView
         ImageView im = holder.bakingImage;
         String imageName = null;
 //        Bitmap bmThumbnail = null;
+
         holder.bakingItemName.setText(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_NAME)));
         holder.bakingServings.setText(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_SERVINGS)));
 
@@ -112,9 +117,15 @@ public class BakingAdapter extends RecyclerView.Adapter<BakingAdapter.RecipeView
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public CardView cardView;
+        @BindView(R.id.info_text)
         TextView bakingItemName;
+
+        @BindView(R.id.servings)
         TextView bakingServings;
+
+        @BindView(R.id.bakingImage)
         ImageView bakingImage;
+
         Cursor bakingCursor;
         Context context;
 
@@ -123,9 +134,10 @@ public class BakingAdapter extends RecyclerView.Adapter<BakingAdapter.RecipeView
             super(itemView);
             this.bakingCursor = bakingCursor;
             this.context = context;
-            bakingItemName = itemView.findViewById(R.id.info_text);
-            bakingImage = itemView.findViewById(R.id.bakingImage);
-            bakingServings = itemView.findViewById(R.id.servings);
+            ButterKnife.bind(this,itemView);
+//            bakingItemName = itemView.findViewById(R.id.info_text);
+//            bakingImage = itemView.findViewById(R.id.bakingImage);
+//            bakingServings = itemView.findViewById(R.id.servings);
             itemView.setOnClickListener(this);
         }
 

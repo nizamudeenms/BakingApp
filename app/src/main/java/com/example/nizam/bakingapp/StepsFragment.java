@@ -13,10 +13,18 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class StepsFragment extends Fragment   {
 
-    private ListView mListView1, mListView2;
+    @BindView(R.id.ingredient_list)
+    ListView mListView1;
+
+    @BindView(R.id.steps_list)
+    ListView mListView2;
+
     private ArrayList<String> ingredientsArr = new ArrayList<String>();
     private ArrayList<String> stepsDescArr = new ArrayList<String>();
     private ArrayList<BakingSteps> tempStepsArr = new ArrayList<BakingSteps>();
@@ -77,8 +85,9 @@ public class StepsFragment extends Fragment   {
         System.out.println(" inside oncreate view ");
 
         View view = inflater.inflate(R.layout.fragment_steps, container, false);
-        mListView1 = view.findViewById(R.id.ingredient_list);
-        mListView2 = view.findViewById(R.id.steps_list);
+        ButterKnife.bind(this,view);
+//        mListView1 = view.findViewById(R.id.ingredient_list);
+//        mListView2 = view.findViewById(R.id.steps_list);
 
 //        String bakingName = getActivity().getIntent().getExtras().getString("bakingName");
 //        String bakingId = getActivity().getIntent().getExtras().getString("bakingId");

@@ -37,6 +37,9 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,16 +47,31 @@ import java.util.ArrayList;
 public class StepsDetailFragment extends Fragment {
     private SQLiteDatabase mBakingDB;
     private ArrayList<String> ingredientsArray = new ArrayList<String>();
-    TextView mShortdesc, mDesc;
-    private SimpleExoPlayerView simpleExoPlayerView;
+
+    @BindView(R.id.recipe_short_desc_text)
+    TextView mShortdesc;
+
+    @BindView(R.id.recipe_desc_text)
+    TextView  mDesc;
+
+    @BindView(R.id.exo_player_view)
+     SimpleExoPlayerView simpleExoPlayerView;
+
+    @BindView(R.id.exo_player_progress_bar)
+    ProgressBar mProgressBar;
+
+    @BindView(R.id.exo_view_rel_layout)
+    RelativeLayout mRelativeLayout;
+
     private SimpleExoPlayer player;
+
     private Timeline.Window window;
+
     private DataSource.Factory mediaDataSourceFactory;
-    private DefaultTrackSelector trackSelector;
     private boolean shouldAutoPlay;
     private BandwidthMeter bandwidthMeter;
-    ProgressBar mProgressBar;
-    RelativeLayout mRelativeLayout;
+
+
     private ArrayList<BakingSteps> tempStepsArr = new ArrayList<BakingSteps>();
     String bakingId = "nil";
     String stepId = "nil";
@@ -116,10 +134,13 @@ public class StepsDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         View view = inflater.inflate(R.layout.fragment_steps_detail, container, false);
-        simpleExoPlayerView = (SimpleExoPlayerView) view.findViewById(R.id.exo_player_view);
-        mProgressBar = view.findViewById(R.id.exo_player_progress_bar);
-        mRelativeLayout = view.findViewById(R.id.exo_view_rel_layout);
+        ButterKnife.bind(this,view);
+//        simpleExoPlayerView = (SimpleExoPlayerView) view.findViewById(R.id.exo_player_view);
+//        mProgressBar = view.findViewById(R.id.exo_player_progress_bar);
+//        mRelativeLayout = view.findViewById(R.id.exo_view_rel_layout);
         mRelativeLayout.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
 
@@ -132,9 +153,9 @@ public class StepsDetailFragment extends Fragment {
 
 //        System.out.println(" tempStepsArr video url " + tempStepsArr.get(0).getVideoUrl());
 
-        mShortdesc = view.findViewById(R.id.recipe_short_desc_text);
+//        mShortdesc = view.findViewById(R.id.recipe_short_desc_text);
         mShortdesc.setText(shortDesc);
-        mDesc = view.findViewById(R.id.recipe_desc_text);
+//        mDesc = view.findViewById(R.id.recipe_desc_text);
         mDesc.setText(desc);
 
         shouldAutoPlay = true;
