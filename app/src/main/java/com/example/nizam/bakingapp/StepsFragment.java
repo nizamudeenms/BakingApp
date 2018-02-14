@@ -1,15 +1,8 @@
 package com.example.nizam.bakingapp;
 
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +13,18 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class StepsFragment extends Fragment   {
 
-    private ListView mListView1, mListView2;
+public class StepsFragment extends Fragment {
+
+    @BindView(R.id.ingredient_list)
+    ListView mListView1;
+
+    @BindView(R.id.steps_list)
+    ListView mListView2;
+
     private ArrayList<String> ingredientsArr = new ArrayList<String>();
     private ArrayList<String> stepsDescArr = new ArrayList<String>();
     private ArrayList<BakingSteps> tempStepsArr = new ArrayList<BakingSteps>();
@@ -53,7 +54,8 @@ public class StepsFragment extends Fragment   {
     }
 
     OnStepClickListener mCallback;
-    public interface  OnStepClickListener{
+
+    public interface OnStepClickListener {
         void onStepSelected(Bundle dataBundle);
     }
 
@@ -62,8 +64,8 @@ public class StepsFragment extends Fragment   {
         super.onAttach(context);
         try {
             mCallback = (OnStepClickListener) context;
-        }catch(ClassCastException e){
-            throw  new ClassCastException(context.toString() + " must implement interface");
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement interface");
         }
     }
 
@@ -75,69 +77,36 @@ public class StepsFragment extends Fragment   {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        System.out.println(" inside oncreate view ");
-
         View view = inflater.inflate(R.layout.fragment_steps, container, false);
-        mListView1 = view.findViewById(R.id.ingredient_list);
-        mListView2 = view.findViewById(R.id.steps_list);
-
-//        String bakingName = getActivity().getIntent().getExtras().getString("bakingName");
-//        String bakingId = getActivity().getIntent().getExtras().getString("bakingId");
-//        getActivity().setTitle(bakingName);
-//        System.out.println("getIntent().getStringExtra(\"bakingId\").toString(): " + bakingId);
-
-        System.out.println("getIngredientsArr :  "+getIngredientsArr().toString());
-        System.out.println("getIngredientsArr :  "+getStepsDescArr().toString());
-
+        ButterKnife.bind(this, view);
         mListView1.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getIngredientsArr()));
         mListView2.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getStepsDescArr()));
-
         ListUtils.setDynamicHeight(mListView1);
         ListUtils.setDynamicHeight(mListView2);
-
-
-
-
         mListView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView adapterView, View view, int position, long id) {
-                System.out.println("position is : " + position);
-
-
                 Bundle b = new Bundle();
                 b.putString("bakingVideo", tempStepsArr.get(position).getVideoUrl().isEmpty() ? "nil" : tempStepsArr.get(position).getVideoUrl());
                 b.putString("stepId", tempStepsArr.get(position).getStepId());
                 b.putString("bakingId", tempStepsArr.get(position).getBakingId());
                 b.putString("shortDesc", tempStepsArr.get(position).getShortDesc());
                 b.putString("desc", tempStepsArr.get(position).getDesc());
-
                 mCallback.onStepSelected(b);
-
-//                if(!tempStepsArray.get(position).getVideoUrl().isEmpty()) {
-
-//                }else{
-//                    Toast noVideosMessageToast = Toast.makeText(getApplicationContext(), "Video Not Available", Toast.LENGTH_SHORT);
-//                    noVideosMessageToast.show();                }
             }
         });
-
+        BakingAppWidgetUpdateService.startBakingService(getContext(), ingredientsArr);
         return view;
     }
 
-
-
-
-
     public static class ListUtils {
         public static void setDynamicHeight(ListView mListView) {
-            System.out.println("inside list set dynamic size");
             ListAdapter mListAdapter = mListView.getAdapter();
             if (mListAdapter == null) {
                 // when adapter is null

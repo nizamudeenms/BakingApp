@@ -5,11 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
     String videoUrl;
     String shortDesc;
     String desc;
+//    SharedPreferences mSharedPreferences = getView().getSharedPreferences("stepsPref", Context.MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,62 +36,31 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
         setContentView(R.layout.activity_recipe_steps);
         bakingName = getIntent().getStringExtra("bakingName");
         bakingId = getIntent().getStringExtra("bakingId");
-//        stepId = getIntent().getStringExtra("stepId");
-//        videoUrl = getIntent().getStringExtra("bakingVideo");
-//        shortDesc = getIntent().getStringExtra("bakingShortDesc");
-//        desc = getIntent().getStringExtra("bakingDesc");
-
         setTitle(bakingName);
 
-        System.out.println("baking id from object : " + bakingId);
-//        System.out.println("step id from object : " + stepId);
-//        System.out.println("videoUrl from object : " + videoUrl);
-//        System.out.println("shortDesc from object : " + shortDesc);
-//        System.out.println("desc from object : " + desc);
-//
         fetchDbForIngredients(bakingId);
         fetchDBForSteps(bakingId);
 
-
-        System.out.println("reuslts : " + ingredientsArray.toString());
-        System.out.println("stepsDescArray : " + stepsDescArray.toString());
-        System.out.println("size of tempArray :" + tempStepsArray.size());
-
         if (findViewById(R.id.tablet_layout) != null) {
-            System.out.println(" two pane started");
             mTwoPane = true;
-
             FragmentManager fragmentManager = getSupportFragmentManager();
-
             StepsFragment stepsFragment = new StepsFragment();
             stepsFragment.setIngredientsArr(ingredientsArray);
             stepsFragment.setStepsDescArr(stepsDescArray);
             stepsFragment.setTempStepsArr(tempStepsArray);
             fragmentManager.beginTransaction().add(R.id.double_fragment_container, stepsFragment).commit();
 
-            System.out.println(" steps  in 2 pane fragment done ");
-
             StepsDetailFragment stepsDetailFragment = new StepsDetailFragment();
-//            stepsDetailFragment.setVideoUrl(tempStepsArray.get());
             fragmentManager.beginTransaction().add(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
-            System.out.println(" details  in 2 pane fragment done ");
-//            StepsDetailFragment stepsDetailFragment = new StepsDetailFragment();
-//            fragmentManager.beginTransaction().add(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
         } else {
-
-            System.out.println(" single pane started");
             mTwoPane = false;
             FragmentManager fragmentManager = getSupportFragmentManager();
-
             StepsFragment stepsFragment2 = new StepsFragment();
             stepsFragment2.setIngredientsArr(ingredientsArray);
             stepsFragment2.setStepsDescArr(stepsDescArray);
             stepsFragment2.setTempStepsArr(tempStepsArray);
             fragmentManager.beginTransaction().add(R.id.single_fragment_container, stepsFragment2).commit();
-
         }
-
-
     }
 
 
@@ -105,7 +76,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             getSupportFragmentManager().beginTransaction().replace(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
 
         } else {
-            System.out.println(" else part on step sleected");
             Intent intent = new Intent(this, RecipeDetailsActivity.class);
             intent.putExtras(dataBundle);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -121,7 +91,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             Cursor c = mBakingDB.rawQuery("SELECT baking_id, baking_quantity,baking_measure,baking_ingredient  FROM " +
                     BakingContract.BakingEntry.BAKING_INGREDIENT_TABLE +
                     " where baking_id = '" + bakingId + " ' ", null);
-            System.out.println("cursor : " + c.toString());
             if (c != null) {
                 if (c.moveToFirst()) {
                     do {
@@ -147,7 +116,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             Cursor c = mBakingDB.rawQuery("SELECT baking_id,baking_step_id, baking_short_desc,baking_desc,baking_videourl FROM " +
                     BakingContract.BakingEntry.BAKING_STEPS_TABLE +
                     " where baking_id = '" + bakingId + " ' ", null);
-            System.out.println("cursor : " + c.toString());
             if (c != null) {
                 if (c.moveToFirst()) {
                     do {
@@ -172,5 +140,18 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             if (mBakingDB != null)
                 mBakingDB.close();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        BakingAppWidgetUpdateService.startBakingService(getApplicationContext(), ingredientsArray);
+        return super.onOptionsItemSelected(item);
     }
 }

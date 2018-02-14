@@ -1,7 +1,6 @@
 package com.example.nizam.bakingapp;
 
 
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -37,23 +36,39 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class StepsDetailFragment extends Fragment {
-    private SQLiteDatabase mBakingDB;
-    private ArrayList<String> ingredientsArray = new ArrayList<String>();
-    TextView mShortdesc, mDesc;
-    private SimpleExoPlayerView simpleExoPlayerView;
+
+    @BindView(R.id.recipe_short_desc_text)
+    TextView mShortdesc;
+
+    @BindView(R.id.recipe_desc_text)
+    TextView mDesc;
+
+    @BindView(R.id.exo_player_view)
+    SimpleExoPlayerView simpleExoPlayerView;
+
+    @BindView(R.id.exo_player_progress_bar)
+    ProgressBar mProgressBar;
+
+    @BindView(R.id.exo_view_rel_layout)
+    RelativeLayout mRelativeLayout;
+
     private SimpleExoPlayer player;
+
     private Timeline.Window window;
+
     private DataSource.Factory mediaDataSourceFactory;
-    private DefaultTrackSelector trackSelector;
     private boolean shouldAutoPlay;
     private BandwidthMeter bandwidthMeter;
-    ProgressBar mProgressBar;
-    RelativeLayout mRelativeLayout;
+
+
     private ArrayList<BakingSteps> tempStepsArr = new ArrayList<BakingSteps>();
     String bakingId = "nil";
     String stepId = "nil";
@@ -116,25 +131,13 @@ public class StepsDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         View view = inflater.inflate(R.layout.fragment_steps_detail, container, false);
-        simpleExoPlayerView = (SimpleExoPlayerView) view.findViewById(R.id.exo_player_view);
-        mProgressBar = view.findViewById(R.id.exo_player_progress_bar);
-        mRelativeLayout = view.findViewById(R.id.exo_view_rel_layout);
+        ButterKnife.bind(this, view);
         mRelativeLayout.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
-
-
-        System.out.println("baking id from object : " + bakingId);
-        System.out.println("step id from object : " + stepId);
-        System.out.println("videoUrl from object : " + videoUrl);
-        System.out.println("shortDesc from object : " + shortDesc);
-        System.out.println("desc from object : " + desc);
-
-//        System.out.println(" tempStepsArr video url " + tempStepsArr.get(0).getVideoUrl());
-
-        mShortdesc = view.findViewById(R.id.recipe_short_desc_text);
         mShortdesc.setText(shortDesc);
-        mDesc = view.findViewById(R.id.recipe_desc_text);
         mDesc.setText(desc);
 
         shouldAutoPlay = true;
@@ -142,16 +145,29 @@ public class StepsDetailFragment extends Fragment {
         mediaDataSourceFactory = new DefaultDataSourceFactory(getContext(), Util.getUserAgent(getContext(), "mediaPlayerSample"), (TransferListener<? super DataSource>) bandwidthMeter);
         window = new Timeline.Window();
 
-//        videoUrl = tempStepsArr.get(0).getVideoUrl();
-
-        if ( !videoUrl.equals("nil") ) {
+        if (!videoUrl.equals("nil")) {
+            mShortdesc.setVisibility(View.VISIBLE);
+            mDesc.setVisibility(View.VISIBLE);
             initializePlayer(videoUrl);
-        }else {
+        } else {
             simpleExoPlayerView.setVisibility(View.GONE);
+            if (!mShortdesc.getText().equals("nil")) {
+                mShortdesc.setVisibility(View.VISIBLE);
+                mDesc.setVisibility(View.VISIBLE);
+            } else {
+                mShortdesc.setVisibility(View.INVISIBLE);
+                mDesc.setVisibility(View.INVISIBLE);
+            }
         }
         return view;
     }
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     private void initializePlayer(String videoUrl) {
 
@@ -179,13 +195,10 @@ public class StepsDetailFragment extends Fragment {
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                System.out.println(" inside onPlayerStateChanged");
                 if (playbackState == Player.STATE_BUFFERING) {
-                    System.out.println(" inside set prog visible");
                     mRelativeLayout.setVisibility(View.VISIBLE);
                     mProgressBar.setVisibility(View.VISIBLE);
                 } else {
-                    System.out.println(" inside set prog invisible");
                     mRelativeLayout.setVisibility(View.GONE);
                     mProgressBar.setVisibility(View.GONE);
                 }
@@ -223,9 +236,6 @@ public class StepsDetailFragment extends Fragment {
         });
 
         player.setPlayWhenReady(shouldAutoPlay);
-/*        MediaSource mediaSource = new HlsMediaSource(Uri.parse("https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"),
-                mediaDataSourceFactory, mainHandler, null);*/
-
         DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
 
         MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl),
@@ -234,5 +244,12 @@ public class StepsDetailFragment extends Fragment {
         player.prepare(mediaSource);
     }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (player != null) {
+            player.stop();
+            player.release();
+        }
+    }
 }
