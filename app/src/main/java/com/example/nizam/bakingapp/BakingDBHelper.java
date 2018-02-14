@@ -26,8 +26,8 @@ public class BakingDBHelper extends SQLiteOpenHelper {
             BakingContract.BakingEntry.COLUMN_BAKING_QUANTITY + " INTEGER NOT NULL,  " +
             BakingContract.BakingEntry.COLUMN_BAKING_MEASURE + " INTEGER NOT NULL,  " +
             BakingContract.BakingEntry.COLUMN_BAKING_INGREDIENT + " INTEGER NOT NULL, FOREIGN KEY(baking_id) REFERENCES baking_main_table(baking_id), " +
-            " UNIQUE (" + BakingContract.BakingEntry.COLUMN_BAKING_ID +","+BakingContract.BakingEntry.COLUMN_BAKING_QUANTITY+
-            ","+BakingContract.BakingEntry.COLUMN_BAKING_MEASURE+","+BakingContract.BakingEntry.COLUMN_BAKING_INGREDIENT+") ON CONFLICT REPLACE); ";
+            " UNIQUE (" + BakingContract.BakingEntry.COLUMN_BAKING_ID + "," + BakingContract.BakingEntry.COLUMN_BAKING_QUANTITY +
+            "," + BakingContract.BakingEntry.COLUMN_BAKING_MEASURE + "," + BakingContract.BakingEntry.COLUMN_BAKING_INGREDIENT + ") ON CONFLICT REPLACE); ";
 
     final String SQL_CREATE_BAKING_STEPS_TABLE = "CREATE TABLE IF NOT EXISTS " + BakingContract.BakingEntry.BAKING_STEPS_TABLE + " (" +
             BakingContract.BakingEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -36,9 +36,9 @@ public class BakingDBHelper extends SQLiteOpenHelper {
             BakingContract.BakingEntry.COLUMN_BAKING_SHORT_DESC + " INTEGER NOT NULL,  " +
             BakingContract.BakingEntry.COLUMN_BAKING_DESC + " INTEGER NOT NULL,  " +
             BakingContract.BakingEntry.COLUMN_BAKING_VIDEOURL + " INTEGER NOT NULL,  " +
-            BakingContract.BakingEntry.COLUMN_BAKING_THUMBNAILURL + " INTEGER NOT NULL, FOREIGN KEY (baking_id) REFERENCES baking_main_table(baking_id), "+
-            " UNIQUE (" + BakingContract.BakingEntry.COLUMN_BAKING_ID +","+BakingContract.BakingEntry.COLUMN_BAKING_STEP_ID+
-            ","+BakingContract.BakingEntry.COLUMN_BAKING_SHORT_DESC+","+BakingContract.BakingEntry.COLUMN_BAKING_DESC+") ON CONFLICT REPLACE); ";
+            BakingContract.BakingEntry.COLUMN_BAKING_THUMBNAILURL + " INTEGER NOT NULL, FOREIGN KEY (baking_id) REFERENCES baking_main_table(baking_id), " +
+            " UNIQUE (" + BakingContract.BakingEntry.COLUMN_BAKING_ID + "," + BakingContract.BakingEntry.COLUMN_BAKING_STEP_ID +
+            "," + BakingContract.BakingEntry.COLUMN_BAKING_SHORT_DESC + "," + BakingContract.BakingEntry.COLUMN_BAKING_DESC + ") ON CONFLICT REPLACE); ";
 
 
     public BakingDBHelper(Context context) {
@@ -47,7 +47,6 @@ public class BakingDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        System.out.println("inside Oncrate of sqllite ");
 
         db.execSQL(SQL_CREATE_BAKING_TABLE);
         Log.i("Table Created", "SQL_CREATE_BAKING_TABLE TableCreated");

@@ -40,7 +40,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -53,7 +52,6 @@ public class BakingActivity extends AppCompatActivity {
     @BindView(R.id.progressBar)
     ProgressBar mRefresh;
 
-    private ArrayList<Baking> bakingArrayList;
     private String TAG = "BakingActivity";
 
     private String bakingId;
@@ -81,7 +79,6 @@ public class BakingActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,25 +86,19 @@ public class BakingActivity extends AppCompatActivity {
 
 
         if (mIdlingResource != null) {
-            System.out.println("while setting idling resource");
             mIdlingResource.setIdleState(false);
         }
 
         appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        isAppInstalled = appPreferences.getBoolean("isAppInstalled",false);
+        isAppInstalled = appPreferences.getBoolean("isAppInstalled", false);
         installShortcut(isAppInstalled);
 
-//        recyclerView = findViewById(R.id.recycler_view);
         ButterKnife.bind(this);
 
-        System.out.println(" getResources().getInteger(R.integer.grid_number_cols)  : " + getResources().getInteger(R.integer.grid_number_cols));
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), getResources().getInteger(R.integer.grid_number_cols));
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
-        bakingArrayList = new ArrayList<>();
-
-//        mRefresh = findViewById(R.id.progressBar);
 
         recyclerView.setVisibility(View.INVISIBLE);
         mRefresh.setVisibility(View.VISIBLE);
@@ -116,7 +107,6 @@ public class BakingActivity extends AppCompatActivity {
 
         FetchBakingTask bakingTask = new FetchBakingTask();
         bakingTask.execute();
-
 
 
     }
@@ -153,13 +143,11 @@ public class BakingActivity extends AppCompatActivity {
         );
     }
 
-   private void installShortcut(Boolean isAppInstalled){
+    private void installShortcut(Boolean isAppInstalled) {
 
-        if(isAppInstalled==false){
+        if (isAppInstalled == false) {
 
-            //  create short code
-
-            Intent shortcutIntent = new Intent(getApplicationContext(),BakingActivity.class);
+            Intent shortcutIntent = new Intent(getApplicationContext(), BakingActivity.class);
             shortcutIntent.setAction(Intent.ACTION_MAIN);
             Intent intent = new Intent();
             intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
@@ -168,8 +156,6 @@ public class BakingActivity extends AppCompatActivity {
                     .fromContext(getApplicationContext(), R.mipmap.ic_launcher_round));
             intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             getApplicationContext().sendBroadcast(intent);
-
-            //Make preference true
 
             SharedPreferences.Editor editor = appPreferences.edit();
             editor.putBoolean("isAppInstalled", true);
@@ -194,7 +180,6 @@ public class BakingActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            System.out.println(" inside do in bg ");
             final String BAKING_BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
             JsonArrayRequest req = new JsonArrayRequest(BAKING_BASE_URL, new Response.Listener<JSONArray>() {
@@ -203,14 +188,8 @@ public class BakingActivity extends AppCompatActivity {
                 public void onResponse(JSONArray response) {
                     Log.d(TAG, response.toString());
                     try {
-//                              JSONArray responseBundle = response.getJSONArray();
-                        System.out.println(" inside try");
-//                        JSONArray responseBundle = response.getJSONArray();
-                        System.out.println(" response is : " + response.toString());
-                        System.out.println(" response is : " + response.length());
                         for (int j = 0; j < response.length(); j++) {
                             JSONObject c = response.getJSONObject(j);
-                            System.out.println(" jsonobject : " + c.toString());
                             bakingId = c.getString("id");
                             bakingName = c.getString("name");
                             JSONArray bakingIngredients = c.getJSONArray("ingredients");
@@ -237,28 +216,20 @@ public class BakingActivity extends AppCompatActivity {
                             cv.put(BakingContract.BakingEntry.COLUMN_SERVINGS, servings);
                             cv.put(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE, bakingImage);
                             mBakingDB.insert(BakingContract.BakingEntry.BAKING_TABLE, null, cv);
-                            System.out.println("Value inserted in Baking DB ");
 
                             for (int k = 0; k < bakingIngredients.length(); k++) {
                                 JSONObject ing = bakingIngredients.getJSONObject(k);
-                                System.out.println(" ing is : " + ing.toString());
                                 BakingIngredients bakingIngredientsObj = new BakingIngredients();
                                 bakingIngredientsObj.setIngredient(ing.getString("quantity"));
                                 bakingIngredientsObj.setMeasure(ing.getString("measure"));
                                 bakingIngredientsObj.setIngredient(ing.getString("ingredient"));
 
                                 ContentValues cv1 = new ContentValues();
-                                System.out.println("bakingId :  " + bakingId);
-                                System.out.println(" ing.getString(\"quantity\") :  " + ing.getString("quantity"));
-                                System.out.println("ing.getString(\"measure\") :  " + ing.getString("measure"));
-                                System.out.println(" ing.getString(\"ingredient\") :  " + ing.getString("ingredient"));
                                 cv1.put(BakingContract.BakingEntry.COLUMN_BAKING_ID, bakingId);
                                 cv1.put(BakingContract.BakingEntry.COLUMN_BAKING_QUANTITY, ing.getString("quantity"));
                                 cv1.put(BakingContract.BakingEntry.COLUMN_BAKING_MEASURE, ing.getString("measure"));
                                 cv1.put(BakingContract.BakingEntry.COLUMN_BAKING_INGREDIENT, ing.getString("ingredient"));
                                 mBakingDB.insert(BakingContract.BakingEntry.BAKING_INGREDIENT_TABLE, null, cv1);
-                                System.out.println("Value inserted in Baking Ingredient DB ");
-//                                baking.setBakingIngredients(bakingIngredientsObj);
                             }
 
                             for (int h = 0; h < bakingSteps.length(); h++) {
@@ -278,37 +249,8 @@ public class BakingActivity extends AppCompatActivity {
                                 cv2.put(BakingContract.BakingEntry.COLUMN_BAKING_VIDEOURL, steps.getString("videoURL"));
                                 cv2.put(BakingContract.BakingEntry.COLUMN_BAKING_THUMBNAILURL, steps.getString("thumbnailURL"));
                                 mBakingDB.insert(BakingContract.BakingEntry.BAKING_STEPS_TABLE, null, cv2);
-                                System.out.println("Value inserted in Baking STEPS DB ");
-
                                 bakingImage = steps.getString("videoURL");
                             }
-
-                            System.out.println("steps.getString(\"videoURL\") : " + bakingImage);
-
-//                        new Thread(new Runnable() {
-//                            public void run() {
-//                            Bitmap bmThumbnail = null;
-//                            try {
-//                                ContentValues cv3 = new ContentValues();
-////                                bmThumbnail = retriveVideoFrameFromVideo(bakingImage);
-//                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                                bmThumbnail.compress(Bitmap.CompressFormat.PNG, 10, stream);
-//                                cv3.put(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE, stream.toByteArray());
-//                                String whereArgs[] = {bakingId};
-//                                mBakingDB.update(BakingContract.BakingEntry.BAKING_TABLE, cv3, "baking_id=?", whereArgs);
-//                                System.out.println("Value updated in Baking Main DB for video URL ");
-////                            baking.setBakingSteps(bakingStepsObj);
-//                                bakingArrayList.add(baking);
-//                            } catch (Throwable throwable) {
-//                                throwable.printStackTrace();
-//                            }
-//                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                                bmThumbnail.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-//                            }
-//                        }).start();
-
-
                         }
 
                     } catch (JSONException e) {
@@ -318,14 +260,12 @@ public class BakingActivity extends AppCompatActivity {
                     Cursor cBaking = getBaking();
                     bakingAdapter = new BakingAdapter(context, cBaking);
                     recyclerView.setAdapter(bakingAdapter);
-                    System.out.println(" after settings adapter");
 
                     bakingAdapter.notifyDataSetChanged();
                     mRefresh.setVisibility(View.INVISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);
                     Toast toast = Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG);
                     toast.show();
-                    System.out.println("after toast");
                 }
             }, new Response.ErrorListener() {
 
@@ -355,8 +295,6 @@ public class BakingActivity extends AppCompatActivity {
 
             if (mIdlingResource != null) {
                 mIdlingResource.setIdleState(true);
-                System.out.println("while removing idling resource");
-
             }
             return null;
         }
@@ -366,7 +304,6 @@ public class BakingActivity extends AppCompatActivity {
             Bitmap bitmap = null;
             MediaMetadataRetriever mediaMetadataRetriever = null;
             try {
-                System.out.println("inside retieve video method");
                 mediaMetadataRetriever = new MediaMetadataRetriever();
                 if (Build.VERSION.SDK_INT >= 14) {
                     mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());

@@ -36,62 +36,31 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
         setContentView(R.layout.activity_recipe_steps);
         bakingName = getIntent().getStringExtra("bakingName");
         bakingId = getIntent().getStringExtra("bakingId");
-//        stepId = getIntent().getStringExtra("stepId");
-//        videoUrl = getIntent().getStringExtra("bakingVideo");
-//        shortDesc = getIntent().getStringExtra("bakingShortDesc");
-//        desc = getIntent().getStringExtra("bakingDesc");
-
         setTitle(bakingName);
 
-        System.out.println("baking id from object : " + bakingId);
-//        System.out.println("step id from object : " + stepId);
-//        System.out.println("videoUrl from object : " + videoUrl);
-//        System.out.println("shortDesc from object : " + shortDesc);
-//        System.out.println("desc from object : " + desc);
-//
         fetchDbForIngredients(bakingId);
         fetchDBForSteps(bakingId);
 
-
-        System.out.println("reuslts : " + ingredientsArray.toString());
-        System.out.println("stepsDescArray : " + stepsDescArray.toString());
-        System.out.println("size of tempArray :" + tempStepsArray.size());
-
         if (findViewById(R.id.tablet_layout) != null) {
-            System.out.println(" two pane started");
             mTwoPane = true;
-
             FragmentManager fragmentManager = getSupportFragmentManager();
-
             StepsFragment stepsFragment = new StepsFragment();
             stepsFragment.setIngredientsArr(ingredientsArray);
             stepsFragment.setStepsDescArr(stepsDescArray);
             stepsFragment.setTempStepsArr(tempStepsArray);
             fragmentManager.beginTransaction().add(R.id.double_fragment_container, stepsFragment).commit();
 
-            System.out.println(" steps  in 2 pane fragment done ");
-
             StepsDetailFragment stepsDetailFragment = new StepsDetailFragment();
-//            stepsDetailFragment.setVideoUrl(tempStepsArray.get());
             fragmentManager.beginTransaction().add(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
-            System.out.println(" details  in 2 pane fragment done ");
-//            StepsDetailFragment stepsDetailFragment = new StepsDetailFragment();
-//            fragmentManager.beginTransaction().add(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
         } else {
-
-            System.out.println(" single pane started");
             mTwoPane = false;
             FragmentManager fragmentManager = getSupportFragmentManager();
-
             StepsFragment stepsFragment2 = new StepsFragment();
             stepsFragment2.setIngredientsArr(ingredientsArray);
             stepsFragment2.setStepsDescArr(stepsDescArray);
             stepsFragment2.setTempStepsArr(tempStepsArray);
             fragmentManager.beginTransaction().add(R.id.single_fragment_container, stepsFragment2).commit();
-
         }
-
-
     }
 
 
@@ -107,7 +76,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             getSupportFragmentManager().beginTransaction().replace(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
 
         } else {
-            System.out.println(" else part on step sleected");
             Intent intent = new Intent(this, RecipeDetailsActivity.class);
             intent.putExtras(dataBundle);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -123,7 +91,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             Cursor c = mBakingDB.rawQuery("SELECT baking_id, baking_quantity,baking_measure,baking_ingredient  FROM " +
                     BakingContract.BakingEntry.BAKING_INGREDIENT_TABLE +
                     " where baking_id = '" + bakingId + " ' ", null);
-            System.out.println("cursor : " + c.toString());
             if (c != null) {
                 if (c.moveToFirst()) {
                     do {
@@ -149,7 +116,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             Cursor c = mBakingDB.rawQuery("SELECT baking_id,baking_step_id, baking_short_desc,baking_desc,baking_videourl FROM " +
                     BakingContract.BakingEntry.BAKING_STEPS_TABLE +
                     " where baking_id = '" + bakingId + " ' ", null);
-            System.out.println("cursor : " + c.toString());
             if (c != null) {
                 if (c.moveToFirst()) {
                     do {
@@ -185,45 +151,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                onBackPressed();
-//                break;
-//            case R.id.menu_recipe:
-//                addIngredientToWidget(ingredientsArray);
-//                break;
-//        }
-        BakingAppWidgetUpdateService.startBakingService(getApplicationContext(),ingredientsArray);
+        BakingAppWidgetUpdateService.startBakingService(getApplicationContext(), ingredientsArray);
         return super.onOptionsItemSelected(item);
     }
-
-
-
-//    public void addIngredientToWidget(ArrayList<String> ingredientsArray) {
-//
-//        ArrayList<String> ingredients = ingredientsArray;
-//        String recipeName = bakingName;
-//
-//
-//        mSharedPreferences.edit().putString("prefRec", recipeName).apply();
-//
-//
-//        int[] ids = AppWidgetManager.getInstance(getView().getApplication())
-//                .getAppWidgetIds(new ComponentName(getView().getApplication(), AppWidgetProvider.class));
-//        AppWidgetProvider ingredientWidget = new AppWidgetProvider();
-//        ingredientWidget.onUpdate(getView(), AppWidgetManager.getInstance(getView()), ids);
-//        Context context = getView().getApplicationContext();
-//        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-//        ComponentName thisWidget = new ComponentName(context, AppWidgetProvider.class);
-//        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-//        appWidgetManager.notifyAppWidgetViewDataChanged( , R.id.ing_widget_list);
-////        mView.showMessage("successfully added");
-//    }
-//
-//    @Override
-//    public Activity getView() {
-//        return (Activity) mView;
-//    }
-
 }

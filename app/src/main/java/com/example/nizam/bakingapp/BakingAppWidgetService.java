@@ -2,7 +2,6 @@ package com.example.nizam.bakingapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -26,7 +25,6 @@ public class BakingAppWidgetService extends RemoteViewsService {
 
     private class WidgetRemoteViewsFactory implements RemoteViewsFactory {
         private Context mContext;
-        private Cursor mCursor;
 
         public WidgetRemoteViewsFactory(Context context, Intent intent) {
             mContext = context;
@@ -54,15 +52,11 @@ public class BakingAppWidgetService extends RemoteViewsService {
         @Override
         public RemoteViews getViewAt(int position) {
             RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.baking_app_ingredient_list_widget);
-
             views.setTextViewText(R.id.widget_grid_view_item, remoteViewingredientsList.get(position));
-
             Intent fillInIntent = new Intent();
             //fillInIntent.putExtras(extras);
             views.setOnClickFillInIntent(R.id.widget_grid_view_item, fillInIntent);
-
             return views;
-
         }
 
         @Override
@@ -77,7 +71,7 @@ public class BakingAppWidgetService extends RemoteViewsService {
 
         @Override
         public long getItemId(int position) {
-            return  position;
+            return position;
         }
 
         @Override
