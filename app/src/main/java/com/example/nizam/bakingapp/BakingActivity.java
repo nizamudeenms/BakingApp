@@ -13,6 +13,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -63,11 +67,31 @@ public class BakingActivity extends AppCompatActivity {
     boolean isAppInstalled = false;
     public SharedPreferences appPreferences;
 
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        if (mIdlingResource != null) {
+            System.out.println("while setting idling resource");
+            mIdlingResource.setIdleState(false);
+        }
 
         appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         isAppInstalled = appPreferences.getBoolean("isAppInstalled",false);
@@ -92,6 +116,7 @@ public class BakingActivity extends AppCompatActivity {
 
         FetchBakingTask bakingTask = new FetchBakingTask();
         bakingTask.execute();
+
 
 
     }
@@ -328,6 +353,11 @@ public class BakingActivity extends AppCompatActivity {
             });
             BakingController.getInstance().addToRequestQueue(req);
 
+            if (mIdlingResource != null) {
+                mIdlingResource.setIdleState(true);
+                System.out.println("while removing idling resource");
+
+            }
             return null;
         }
 
