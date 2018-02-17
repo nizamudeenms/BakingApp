@@ -145,7 +145,7 @@ public class BakingActivity extends AppCompatActivity {
 
     private void installShortcut(Boolean isAppInstalled) {
 
-        if (isAppInstalled == false) {
+        if (!isAppInstalled) {
 
             Intent shortcutIntent = new Intent(getApplicationContext(), BakingActivity.class);
             shortcutIntent.setAction(Intent.ACTION_MAIN);
@@ -159,7 +159,7 @@ public class BakingActivity extends AppCompatActivity {
 
             SharedPreferences.Editor editor = appPreferences.edit();
             editor.putBoolean("isAppInstalled", true);
-            editor.commit();
+            editor.apply();
         }
 
     }

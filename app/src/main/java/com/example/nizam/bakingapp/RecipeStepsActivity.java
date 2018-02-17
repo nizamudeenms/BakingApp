@@ -41,6 +41,9 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
         fetchDbForIngredients(bakingId);
         fetchDBForSteps(bakingId);
 
+//        getSupportActionBar().hide();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         if (findViewById(R.id.tablet_layout) != null) {
             mTwoPane = true;
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -151,7 +154,15 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        BakingAppWidgetUpdateService.startBakingService(getApplicationContext(), ingredientsArray);
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.menu_recipe:
+                BakingAppWidgetUpdateService.startBakingService(getApplicationContext(), ingredientsArray);
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 }
