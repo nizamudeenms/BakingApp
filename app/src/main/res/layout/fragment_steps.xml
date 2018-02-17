@@ -26,11 +26,12 @@
                 android:textSize="17dp"
                 android:textStyle="bold" />
 
-            <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/ingredient_list"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ingredient_list_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="top" />
+                android:scrollbars="vertical"
+                android:padding="10dp"/>
 
         </LinearLayout>
 
@@ -52,11 +53,12 @@
                 android:layout_height="match_parent"
                 android:layout_margin="10dp">
 
-                <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/steps_list"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/steps_list_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="top" />
+                    android:scrollbars="vertical"
+                    />
 
             </android.support.v7.widget.CardView>
 
