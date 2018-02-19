@@ -1,6 +1,7 @@
 package com.example.nizam.bakingapp;
 
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,24 +11,18 @@ import android.view.MenuItem;
 
 public class RecipeDetailsActivity extends AppCompatActivity {
 
+    static String SELECTED_RECIPES="Selected_Recipes";
+    static String SELECTED_STEPS="Selected_Steps";
+    static String SELECTED_INDEX="Selected_Index";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        ActionBar actionBar;
-//        actionBar = getActionBar();
-//
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         String bakingName = getIntent().getStringExtra("bakingName");
         setContentView(R.layout.activity_recipe_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        ActionBar actionBar = getActionBar();
-////        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF9999")));
-//
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setDisplayShowHomeEnabled(true);
 
         setTitle(bakingName);
 
@@ -53,6 +48,11 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
 }

@@ -3,14 +3,17 @@ package com.example.nizam.bakingapp;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -18,6 +21,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -38,12 +42,15 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class StepsDetailFragment extends Fragment {
+    private long currentPosition = 0;
+    private Unbinder unbinder;
 
     @BindView(R.id.recipe_short_desc_text)
     TextView mShortdesc;
@@ -57,8 +64,8 @@ public class StepsDetailFragment extends Fragment {
     @BindView(R.id.exo_player_progress_bar)
     ProgressBar mProgressBar;
 
-    @BindView(R.id.exo_view_rel_layout)
-    RelativeLayout mRelativeLayout;
+    @BindView(R.id.exo_player_thumbnail_image)
+    ImageView mThumbnail;
 
     private SimpleExoPlayer player;
 
@@ -75,6 +82,15 @@ public class StepsDetailFragment extends Fragment {
     String videoUrl = "nil";
     String shortDesc = "nil";
     String desc = "nil";
+    String thumbnail = "nil";
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 
     public String getBakingId() {
         return bakingId;
@@ -134,8 +150,21 @@ public class StepsDetailFragment extends Fragment {
 
 
         View view = inflater.inflate(R.layout.fragment_steps_detail, container, false);
-        ButterKnife.bind(this, view);
-        mRelativeLayout.setVisibility(View.GONE);
+        unbinder = ButterKnife.bind(this, view);
+//        mRelativeLayout.setVisibility(View.GONE);
+
+        if (!thumbnail.equals("nil")) {
+            Glide.with(getContext())
+                    .load(getContext().getResources().getIdentifier(thumbnail, "mipmap", getContext().getPackageName()))
+                    .placeholder(R.mipmap.ic_launcher)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .crossFade()
+                    .thumbnail(0.5f)
+                    .into(mThumbnail);
+        } else {
+            mThumbnail.setVisibility(View.GONE);
+        }
+
         mProgressBar.setVisibility(View.GONE);
         mShortdesc.setText(shortDesc);
         mDesc.setText(desc);
@@ -169,14 +198,18 @@ public class StepsDetailFragment extends Fragment {
         setRetainInstance(true);
     }
 
+
     private void initializePlayer(String videoUrl) {
+        Handler mainHandler = new Handler();
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        TrackSelector trackSelector =
+                new DefaultTrackSelector(videoTrackSelectionFactory);
 
-        simpleExoPlayerView.requestFocus();
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
 
-        simpleExoPlayerView.setPlayer(player);
+        player = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
+
         player.addListener(new Player.EventListener() {
             @Override
             public void onTimelineChanged(Timeline timeline, Object manifest) {
@@ -196,10 +229,8 @@ public class StepsDetailFragment extends Fragment {
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 if (playbackState == Player.STATE_BUFFERING) {
-                    mRelativeLayout.setVisibility(View.VISIBLE);
                     mProgressBar.setVisibility(View.VISIBLE);
                 } else {
-                    mRelativeLayout.setVisibility(View.GONE);
                     mProgressBar.setVisibility(View.GONE);
                 }
             }
@@ -235,21 +266,38 @@ public class StepsDetailFragment extends Fragment {
             }
         });
 
-        player.setPlayWhenReady(shouldAutoPlay);
-        DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        simpleExoPlayerView.setPlayer(player);
+        DefaultBandwidthMeter bandwidthMeter1 = new DefaultBandwidthMeter();
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getActivity(), Util.getUserAgent(getActivity(), "Baking App"), bandwidthMeter1);
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        MediaSource videoSource = new ExtractorMediaSource(Uri.parse(videoUrl), dataSourceFactory, extractorsFactory, mainHandler, null);
+        player.prepare(videoSource);
 
-        MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl),
-                mediaDataSourceFactory, extractorsFactory, null, null);
-
-        player.prepare(mediaSource);
+        if (currentPosition != 0) player.seekTo(currentPosition);
+        player.setPlayWhenReady(true);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onSaveInstanceState(Bundle currentState) {
+        super.onSaveInstanceState(currentState);
+        if (player != null) {
+            currentState.putLong("PLAYER_POSITION", player.getCurrentPosition());
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
         if (player != null) {
             player.stop();
             player.release();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

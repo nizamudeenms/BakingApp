@@ -7,7 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 
@@ -41,8 +45,19 @@ public class BakingStepsAdapter extends RecyclerView.Adapter<BakingStepsAdapter.
     @Override
     public void onBindViewHolder(BakingStepsAdapter.BakingStepsHolder holder, int position) {
         String bakingSteps = stepsDescArr.get(position);
+//        Bitmap img = R.mipmap.youtube_disabled;
+
         holder.bakingSteps.setText(bakingSteps);
 
+        if(tempStepsArr.get(position).getVideoUrl().isEmpty()){
+            Glide.with(rContext)
+                    .load(R.mipmap.youtube_disabled)
+                    .placeholder(R.mipmap.ic_launcher)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .crossFade()
+                    .thumbnail(0.5f)
+                    .into(holder.thumbnail);
+        }
     }
 
     @Override
@@ -53,6 +68,10 @@ public class BakingStepsAdapter extends RecyclerView.Adapter<BakingStepsAdapter.
     public class BakingStepsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.steps_text_view)
         TextView bakingSteps;
+
+        @BindView(R.id.steps_thumbnailUrl_image)
+        ImageView thumbnail;
+
         private ArrayList<String> stepsDescArr ;
 
 

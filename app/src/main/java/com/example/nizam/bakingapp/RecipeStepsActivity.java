@@ -70,6 +70,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
     @Override
     public void onStepSelected(Bundle dataBundle) {
         if (mTwoPane) {
+            System.out.println("two pane  item selected ");
             StepsDetailFragment stepsDetailFragment = new StepsDetailFragment();
             stepsDetailFragment.setStepId(dataBundle.getString("stepId"));
             stepsDetailFragment.setVideoUrl(dataBundle.getString("bakingVideo"));
@@ -116,7 +117,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
         try {
             BakingDBHelper bakingDBHelper = new BakingDBHelper(this);
             mBakingDB = bakingDBHelper.getWritableDatabase();
-            Cursor c = mBakingDB.rawQuery("SELECT baking_id,baking_step_id, baking_short_desc,baking_desc,baking_videourl FROM " +
+            Cursor c = mBakingDB.rawQuery("SELECT baking_id,baking_step_id, baking_short_desc,baking_desc,baking_videourl,baking_thumbnail FROM " +
                     BakingContract.BakingEntry.BAKING_STEPS_TABLE +
                     " where baking_id = '" + bakingId + " ' ", null);
             if (c != null) {
@@ -128,11 +129,13 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
                         String bakingShortDesc = c.getString(c.getColumnIndex("baking_short_desc"));
                         String bakingDesc = c.getString(c.getColumnIndex("baking_desc"));
                         String bakingVideoUrl = c.getString(c.getColumnIndex("baking_videourl"));
+                        String bakingThumbnailUrl = c.getString(c.getColumnIndex("baking_thumbnail"));
                         stepsDescArray.add(bakingShortDesc);
                         bakingStepsObj.setStepId(bakingStepId);
                         bakingStepsObj.setShortDesc(bakingShortDesc);
                         bakingStepsObj.setDesc(bakingDesc);
                         bakingStepsObj.setVideoUrl(bakingVideoUrl);
+                        bakingStepsObj.setThumbnailUrl(bakingThumbnailUrl);
                         tempStepsArray.add(bakingStepsObj);
                     } while (c.moveToNext());
                 }
