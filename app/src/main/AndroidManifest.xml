@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RecipeDetailsActivity" android:configChanges="orientation|screenSize" />
-        <activity android:name=".RecipeStepsActivity" />
+        <activity android:name=".RecipeStepsActivity"  android:configChanges="orientation|screenSize"/>
 
         <receiver android:name=".BakingAppWidget">
             <intent-filter>

@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -66,6 +67,9 @@ public class StepsDetailFragment extends Fragment {
 
     @BindView(R.id.exo_player_thumbnail_image)
     ImageView mThumbnail;
+
+    @BindView(R.id.step_details_frame_layout)
+    FrameLayout mFramelayout;
 
     private SimpleExoPlayer player;
 
@@ -151,7 +155,6 @@ public class StepsDetailFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_steps_detail, container, false);
         unbinder = ButterKnife.bind(this, view);
-//        mRelativeLayout.setVisibility(View.GONE);
 
         if (!thumbnail.equals("nil")) {
             Glide.with(getContext())
@@ -179,13 +182,14 @@ public class StepsDetailFragment extends Fragment {
             mDesc.setVisibility(View.VISIBLE);
             initializePlayer(videoUrl);
         } else {
+            mFramelayout.setVisibility(View.GONE);
             simpleExoPlayerView.setVisibility(View.GONE);
-            if (!mShortdesc.getText().equals("nil")) {
-                mShortdesc.setVisibility(View.VISIBLE);
-                mDesc.setVisibility(View.VISIBLE);
-            } else {
+            if (mShortdesc.getText().equals("nil")) {
                 mShortdesc.setVisibility(View.INVISIBLE);
                 mDesc.setVisibility(View.INVISIBLE);
+            } else {
+                mShortdesc.setVisibility(View.VISIBLE);
+                mDesc.setVisibility(View.VISIBLE);
             }
         }
         return view;

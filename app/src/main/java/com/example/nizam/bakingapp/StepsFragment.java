@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class StepsFragment extends Fragment {
+public class StepsFragment extends Fragment implements BakingStepsAdapter.StepSelectedListener {
 
     @BindView(R.id.ingredient_list_recycler_view)
     RecyclerView ingredientsRecyclerView;
@@ -27,6 +27,14 @@ public class StepsFragment extends Fragment {
 
     BakingStepsAdapter mStepsAdapter;
     BakingIngredientsAdapter mIngredientsAdapter;
+    private StepListener stepListener;
+
+
+    public interface StepListener {
+        void itemClicked(Bundle b);
+    }
+
+
 
     private ArrayList<String> ingredientsArr = new ArrayList<String>();
     private ArrayList<String> stepsDescArr = new ArrayList<String>();
@@ -56,17 +64,13 @@ public class StepsFragment extends Fragment {
         this.tempStepsArr = tempStepsArr;
     }
 
-    OnStepClickListener mCallback;
 
-    public interface OnStepClickListener {
-        void onStepSelected(Bundle dataBundle);
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (OnStepClickListener) context;
+            stepListener = (StepListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement interface");
         }
@@ -109,27 +113,20 @@ public class StepsFragment extends Fragment {
                 DividerItemDecoration.VERTICAL));
 
         System.out.println("getStepsDescArr : " + getStepsDescArr());
-        mStepsAdapter = new BakingStepsAdapter(getStepsDescArr(), tempStepsArr);
+        mStepsAdapter = new BakingStepsAdapter(getContext(),getStepsDescArr(), tempStepsArr,this::onStepSelected);
         stepsRecyclerView.setAdapter(mStepsAdapter);
-
-//
-//        mListView1.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getIngredientsArr()));
-//        mListView2.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getStepsDescArr()));
-//        ListUtils.setDynamicHeight(mListView1);
-//        ListUtils.setDynamicHeight(mListView2);
-//        mListView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            public void onItemClick(AdapterView adapterView, View view, int position, long id) {
-//                Bundle b = new Bundle();
-//                b.putString("bakingVideo", tempStepsArr.get(position).getVideoUrl().isEmpty() ? "nil" : tempStepsArr.get(position).getVideoUrl());
-//                b.putString("stepId", tempStepsArr.get(position).getStepId());
-//                b.putString("bakingId", tempStepsArr.get(position).getBakingId());
-//                b.putString("shortDesc", tempStepsArr.get(position).getShortDesc());
-//                b.putString("desc", tempStepsArr.get(position).getDesc());
-//                mCallback.onStepSelected(b);
-//            }
-//        });
         BakingAppWidgetUpdateService.startBakingService(getContext(), ingredientsArr);
         return view;
+    }
+
+    @Override
+    public void onStepSelected(int position) {
+        Bundle b = new Bundle();
+        b.putString("bakingVideo", tempStepsArr.get(position).getVideoUrl().isEmpty() ? "nil" : tempStepsArr.get(position).getVideoUrl());
+        b.putString("stepId", tempStepsArr.get(position).getStepId());
+        b.putString("bakingId", tempStepsArr.get(position).getBakingId());
+        b.putString("shortDesc", tempStepsArr.get(position).getShortDesc());
+        b.putString("desc", tempStepsArr.get(position).getDesc());
+        stepListener.itemClicked(b);
     }
 }

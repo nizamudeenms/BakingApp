@@ -6,10 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
@@ -39,8 +36,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -298,32 +293,5 @@ public class BakingActivity extends AppCompatActivity {
             }
             return null;
         }
-
-        public synchronized Bitmap retriveVideoFrameFromVideo(String videoPath)
-                throws Throwable {
-            Bitmap bitmap = null;
-            MediaMetadataRetriever mediaMetadataRetriever = null;
-            try {
-                mediaMetadataRetriever = new MediaMetadataRetriever();
-                if (Build.VERSION.SDK_INT >= 14) {
-                    mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());
-                } else {
-                    mediaMetadataRetriever.setDataSource(videoPath);
-                }
-                bitmap = mediaMetadataRetriever.getFrameAtTime();
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new Throwable(
-                        "Exception in retriveVideoFrameFromVideo(String videoPath)"
-                                + e.getMessage());
-
-            } finally {
-                if (mediaMetadataRetriever != null) {
-                    mediaMetadataRetriever.release();
-                }
-            }
-            return bitmap;
-        }
-
     }
 }

@@ -1,7 +1,6 @@
 package com.example.nizam.bakingapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,12 +26,20 @@ public class BakingStepsAdapter extends RecyclerView.Adapter<BakingStepsAdapter.
     private Context rContext;
     private ArrayList<String> stepsDescArr ;
     private ArrayList<BakingSteps> tempStepsArr ;
-    StepsFragment.OnStepClickListener mCallback;
 
+    private StepSelectedListener stepSelectedListener;
 
-    public BakingStepsAdapter(ArrayList<String> stepsDescArr, ArrayList<BakingSteps> tempStepsArr) {
+    public interface StepSelectedListener {
+
+        void onStepSelected(int position);
+
+    }
+
+    public BakingStepsAdapter(Context rContext, ArrayList<String> stepsDescArr, ArrayList<BakingSteps> tempStepsArr, StepSelectedListener stepSelectedListener) {
+        this.rContext = rContext;
         this.stepsDescArr = stepsDescArr;
         this.tempStepsArr = tempStepsArr;
+        this.stepSelectedListener = stepSelectedListener;
     }
 
     @Override
@@ -45,8 +52,6 @@ public class BakingStepsAdapter extends RecyclerView.Adapter<BakingStepsAdapter.
     @Override
     public void onBindViewHolder(BakingStepsAdapter.BakingStepsHolder holder, int position) {
         String bakingSteps = stepsDescArr.get(position);
-//        Bitmap img = R.mipmap.youtube_disabled;
-
         holder.bakingSteps.setText(bakingSteps);
 
         if(tempStepsArr.get(position).getVideoUrl().isEmpty()){
@@ -92,10 +97,7 @@ public class BakingStepsAdapter extends RecyclerView.Adapter<BakingStepsAdapter.
             b.putString("bakingId", tempStepsArr.get(position).getBakingId());
             b.putString("shortDesc", tempStepsArr.get(position).getShortDesc());
             b.putString("desc", tempStepsArr.get(position).getDesc());
-//            mCallback.onStepSelected(b);
-            Intent intent = new Intent(rContext, RecipeDetailsActivity.class);
-            intent.putExtras(b);
-            rContext.startActivity(intent);
+            stepSelectedListener.onStepSelected(position);
         }
     }
 }

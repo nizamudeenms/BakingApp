@@ -1,6 +1,7 @@
 package com.example.nizam.bakingapp;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -14,7 +15,7 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
-public class RecipeStepsActivity extends AppCompatActivity implements StepsFragment.OnStepClickListener {
+public class RecipeStepsActivity extends AppCompatActivity implements StepsFragment.StepListener {
 
     private boolean mTwoPane;
     private ArrayList<String> ingredientsArray = new ArrayList<String>();
@@ -28,7 +29,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
     String videoUrl;
     String shortDesc;
     String desc;
-//    SharedPreferences mSharedPreferences = getView().getSharedPreferences("stepsPref", Context.MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
         fetchDbForIngredients(bakingId);
         fetchDBForSteps(bakingId);
 
-//        getSupportActionBar().hide();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (findViewById(R.id.tablet_layout) != null) {
@@ -65,28 +64,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             fragmentManager.beginTransaction().add(R.id.single_fragment_container, stepsFragment2).commit();
         }
     }
-
-
-    @Override
-    public void onStepSelected(Bundle dataBundle) {
-        if (mTwoPane) {
-            System.out.println("two pane  item selected ");
-            StepsDetailFragment stepsDetailFragment = new StepsDetailFragment();
-            stepsDetailFragment.setStepId(dataBundle.getString("stepId"));
-            stepsDetailFragment.setVideoUrl(dataBundle.getString("bakingVideo"));
-            stepsDetailFragment.setBakingId(dataBundle.getString("bakingId"));
-            stepsDetailFragment.setShortDesc(dataBundle.getString("shortDesc"));
-            stepsDetailFragment.setDesc(dataBundle.getString("desc"));
-            getSupportFragmentManager().beginTransaction().replace(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
-
-        } else {
-            Intent intent = new Intent(this, RecipeDetailsActivity.class);
-            intent.putExtras(dataBundle);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-    }
-
 
     private void fetchDbForIngredients(String bakingId) {
         try {
@@ -168,4 +145,30 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void itemClicked(Bundle dataBundle) {
+        if (mTwoPane) {
+            System.out.println("two pane  item selected ");
+            StepsDetailFragment stepsDetailFragment = new StepsDetailFragment();
+            stepsDetailFragment.setStepId(dataBundle.getString("stepId"));
+            stepsDetailFragment.setVideoUrl(dataBundle.getString("bakingVideo"));
+            stepsDetailFragment.setBakingId(dataBundle.getString("bakingId"));
+            stepsDetailFragment.setShortDesc(dataBundle.getString("shortDesc"));
+            stepsDetailFragment.setDesc(dataBundle.getString("desc"));
+            getSupportFragmentManager().beginTransaction().replace(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
+
+        } else {
+            Intent intent = new Intent(this, RecipeDetailsActivity.class);
+            intent.putExtras(dataBundle);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
 }
