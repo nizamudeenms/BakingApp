@@ -79,17 +79,20 @@ public class BakingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//
+//        if (mIdlingResource != null) {
+//            mIdlingResource.setIdleState(false);
+//        }
 
-        if (mIdlingResource != null) {
-            mIdlingResource.setIdleState(false);
-        }
+//        MessageDelayer.processMessage();
+
+//        System.out.println("midlingresource value : "+mIdlingResource.isIdleNow());
 
         appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         isAppInstalled = appPreferences.getBoolean("isAppInstalled", false);
         installShortcut(isAppInstalled);
 
         ButterKnife.bind(this);
-
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), getResources().getInteger(R.integer.grid_number_cols));
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -103,7 +106,7 @@ public class BakingActivity extends AppCompatActivity {
         FetchBakingTask bakingTask = new FetchBakingTask();
         bakingTask.execute();
 
-
+        getIdlingResource();
     }
 
     @Override
@@ -141,7 +144,6 @@ public class BakingActivity extends AppCompatActivity {
     private void installShortcut(Boolean isAppInstalled) {
 
         if (!isAppInstalled) {
-
             Intent shortcutIntent = new Intent(getApplicationContext(), BakingActivity.class);
             shortcutIntent.setAction(Intent.ACTION_MAIN);
             Intent intent = new Intent();
@@ -170,6 +172,14 @@ public class BakingActivity extends AppCompatActivity {
                 null
         );
     }
+
+//    @Override
+//    public void onDone(String text) {
+//
+//
+//        Toast toast = Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG);
+//        toast.show();
+//    }
 
     public class FetchBakingTask extends AsyncTask<Void, Void, Void> {
 
@@ -259,8 +269,7 @@ public class BakingActivity extends AppCompatActivity {
                     bakingAdapter.notifyDataSetChanged();
                     mRefresh.setVisibility(View.INVISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);
-                    Toast toast = Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG);
-                    toast.show();
+
                 }
             }, new Response.ErrorListener() {
 
@@ -288,10 +297,11 @@ public class BakingActivity extends AppCompatActivity {
             });
             BakingController.getInstance().addToRequestQueue(req);
 
-            if (mIdlingResource != null) {
-                mIdlingResource.setIdleState(true);
-            }
             return null;
         }
     }
+
+
+
+
 }
