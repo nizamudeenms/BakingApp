@@ -14,13 +14,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.CoreMatchers.anything;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by nizamudeenms on 03/01/18.
@@ -36,18 +35,13 @@ public class BakingActivityEspressoTest {
     @Before
     public void registerIdlingResource() {
         mIdlingResource = mActivityRule.getActivity().getIdlingResource();
-        System.out.println("mIdlingResource : "+ mIdlingResource.isIdleNow());
         Espresso.registerIdlingResources(mIdlingResource);
     }
 
     @Test
     public void ensureRecyclerViewExists() {
-        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()));
-//        onView(ViewMatchers.withId(R.id.recycler_view)).perform(RecyclerViewActions.scrollToPosition(1));
-//        onView(withText("Brownies")).check(matches(isDisplayed()));
-
-//        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
-//        intended(hasExtraWithKey("bakingId"));
+        onView(ViewMatchers.withId(R.id.recycler_view)).perform(RecyclerViewActions.scrollToPosition(1));
+        onView(withText("Brownies")).check(matches(isDisplayed()));
     }
 
     @Test
@@ -65,7 +59,7 @@ public class BakingActivityEspressoTest {
     @Test
     public void checkPlayerViewIsVisible_RecipeDetailActivity1() {
         onView(ViewMatchers.withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        onData(anything()).inAdapterView(withId(R.id.steps_list_recycler_view)).atPosition(0).perform(click());
+        onView(ViewMatchers.withId(R.id.steps_list_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         onView(withId(R.id.exo_player_view)).check(matches(isDisplayed()));
     }
 
@@ -75,5 +69,4 @@ public class BakingActivityEspressoTest {
             Espresso.unregisterIdlingResources(mIdlingResource);
         }
     }
-
 }

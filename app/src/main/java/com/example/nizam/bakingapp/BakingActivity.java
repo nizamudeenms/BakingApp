@@ -40,7 +40,7 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class BakingActivity extends AppCompatActivity {
+public class BakingActivity extends AppCompatActivity implements MessageDelayer.DelayerCallback {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -48,7 +48,6 @@ public class BakingActivity extends AppCompatActivity {
     ProgressBar mRefresh;
 
     private String TAG = "BakingActivity";
-
     private String bakingId;
     private String bakingName;
     private String servings;
@@ -64,29 +63,18 @@ public class BakingActivity extends AppCompatActivity {
     private SimpleIdlingResource mIdlingResource;
 
 
-    @VisibleForTesting
-    @NonNull
-    public IdlingResource getIdlingResource() {
-        if (mIdlingResource == null) {
-            mIdlingResource = new SimpleIdlingResource();
-        }
-        return mIdlingResource;
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//
-//        if (mIdlingResource != null) {
-//            mIdlingResource.setIdleState(false);
-//        }
+        getIdlingResource();
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
 
-//        MessageDelayer.processMessage();
-
-//        System.out.println("midlingresource value : "+mIdlingResource.isIdleNow());
+        final String text = "Sample Text";
+        MessageDelayer.processMessage(text, this, mIdlingResource);
 
         appPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         isAppInstalled = appPreferences.getBoolean("isAppInstalled", false);
@@ -105,8 +93,6 @@ public class BakingActivity extends AppCompatActivity {
 
         FetchBakingTask bakingTask = new FetchBakingTask();
         bakingTask.execute();
-
-        getIdlingResource();
     }
 
     @Override
@@ -115,6 +101,16 @@ public class BakingActivity extends AppCompatActivity {
         outState.putParcelable("ListState", recyclerView.getLayoutManager().onSaveInstanceState());
 
     }
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
 
     private Cursor getBaking() {
         return mBakingDB.query(
@@ -173,22 +169,18 @@ public class BakingActivity extends AppCompatActivity {
         );
     }
 
-//    @Override
-//    public void onDone(String text) {
-//
-//
-//        Toast toast = Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG);
-//        toast.show();
-//    }
+    @Override
+    public void onDone(String text) {
+        Toast toast = Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG);
+        toast.show();
+    }
 
     public class FetchBakingTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
             final String BAKING_BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
-
             JsonArrayRequest req = new JsonArrayRequest(BAKING_BASE_URL, new Response.Listener<JSONArray>() {
-
                 @Override
                 public void onResponse(JSONArray response) {
                     Log.d(TAG, response.toString());
@@ -296,12 +288,7 @@ public class BakingActivity extends AppCompatActivity {
                 }
             });
             BakingController.getInstance().addToRequestQueue(req);
-
             return null;
         }
     }
-
-
-
-
 }
