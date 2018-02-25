@@ -101,7 +101,6 @@ public class StepsFragment extends Fragment implements BakingStepsAdapter.StepSe
         ingredientsRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
 
-        System.out.println("getStepsDescArr : " + getIngredientsArr());
         mIngredientsAdapter = new BakingIngredientsAdapter(getIngredientsArr());
         ingredientsRecyclerView.setAdapter(mIngredientsAdapter);
 
@@ -112,7 +111,6 @@ public class StepsFragment extends Fragment implements BakingStepsAdapter.StepSe
         stepsRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
 
-        System.out.println("getStepsDescArr : " + getStepsDescArr());
         mStepsAdapter = new BakingStepsAdapter(getContext(),getStepsDescArr(), tempStepsArr,this::onStepSelected);
         stepsRecyclerView.setAdapter(mStepsAdapter);
         BakingAppWidgetUpdateService.startBakingService(getContext(), ingredientsArr);

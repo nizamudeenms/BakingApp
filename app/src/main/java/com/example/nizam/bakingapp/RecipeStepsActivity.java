@@ -149,7 +149,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
     @Override
     public void itemClicked(Bundle dataBundle) {
         if (mTwoPane) {
-            System.out.println("two pane  item selected ");
             StepsDetailFragment stepsDetailFragment = new StepsDetailFragment();
             stepsDetailFragment.setStepId(dataBundle.getString("stepId"));
             stepsDetailFragment.setVideoUrl(dataBundle.getString("bakingVideo"));
