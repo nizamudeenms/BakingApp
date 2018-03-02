@@ -11,8 +11,8 @@
     android:layout_centerVertical="true"
     xmlns:android="http://schemas.android.com/apk/res/android" />
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollview_top"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nestedScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -30,5 +30,5 @@
             app:spanCount="2"
             />
     </FrameLayout>
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>
 </RelativeLayout>

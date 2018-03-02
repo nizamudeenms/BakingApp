@@ -19,9 +19,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         setTitle(bakingName);
-
 
         FragmentManager fragmentManager2 = getSupportFragmentManager();
         stepsDetailFragment2 = new StepsDetailFragment();

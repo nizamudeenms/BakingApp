@@ -25,10 +25,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
     BakingSteps bakingStepsObj;
     String bakingName;
     String bakingId;
-    String stepId;
-    String videoUrl;
-    String shortDesc;
-    String desc;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +151,7 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             stepsDetailFragment.setBakingId(dataBundle.getString("bakingId"));
             stepsDetailFragment.setShortDesc(dataBundle.getString("shortDesc"));
             stepsDetailFragment.setDesc(dataBundle.getString("desc"));
+            stepsDetailFragment.setThumbnail(dataBundle.getString("thumbnailUrl"));
             getSupportFragmentManager().beginTransaction().replace(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
         } else {
             Intent intent = new Intent(this, RecipeDetailsActivity.class);

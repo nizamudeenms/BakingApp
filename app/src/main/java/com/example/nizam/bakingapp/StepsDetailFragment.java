@@ -172,7 +172,7 @@ public class StepsDetailFragment extends Fragment implements ExoPlayer.EventList
         View view = inflater.inflate(R.layout.fragment_steps_detail, container, false);
         ButterKnife.bind(this, view);
 
-        if (!thumbnail.equals("nil")) {
+        if (!thumbnail.equals("nil") && !thumbnail.isEmpty()) {
             Glide.with(getContext())
                     .load(getContext().getResources().getIdentifier(thumbnail, "mipmap", getContext().getPackageName()))
                     .placeholder(R.mipmap.ic_launcher)

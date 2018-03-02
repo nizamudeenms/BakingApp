@@ -125,6 +125,7 @@ public class StepsFragment extends Fragment implements BakingStepsAdapter.StepSe
         b.putString("bakingId", tempStepsArr.get(position).getBakingId());
         b.putString("shortDesc", tempStepsArr.get(position).getShortDesc());
         b.putString("desc", tempStepsArr.get(position).getDesc());
+        b.putString("thumbnailUrl", tempStepsArr.get(position).getThumbnailUrl());
         stepListener.itemClicked(b);
     }
 }
