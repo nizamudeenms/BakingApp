@@ -1,7 +1,6 @@
 package com.example.nizam.bakingapp;
 
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,10 +9,7 @@ import android.view.MenuItem;
 
 
 public class RecipeDetailsActivity extends AppCompatActivity {
-
-    static String SELECTED_RECIPES="Selected_Recipes";
-    static String SELECTED_STEPS="Selected_Steps";
-    static String SELECTED_INDEX="Selected_Index";
+    StepsDetailFragment stepsDetailFragment2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +24,20 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
 
         FragmentManager fragmentManager2 = getSupportFragmentManager();
-        StepsDetailFragment stepsDetailFragment2 = new StepsDetailFragment();
+        stepsDetailFragment2 = new StepsDetailFragment();
         stepsDetailFragment2.setBakingId(getIntent().getStringExtra("bakingId"));
         stepsDetailFragment2.setVideoUrl(getIntent().getStringExtra("bakingVideo"));
         stepsDetailFragment2.setStepId(getIntent().getStringExtra("stepId"));
         stepsDetailFragment2.setShortDesc(getIntent().getStringExtra("shortDesc"));
         stepsDetailFragment2.setDesc(getIntent().getStringExtra("desc"));
 
-        FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction().add(R.id.step_detail_fragment_container, stepsDetailFragment2);
-        fragmentTransaction2.commit();
+
+        if (savedInstanceState == null) {
+            FragmentTransaction fragmentTransaction2 = fragmentManager2.beginTransaction().add(R.id.step_detail_fragment_container, stepsDetailFragment2);
+            fragmentTransaction2.commit();
+        } else {
+            stepsDetailFragment2 = (StepsDetailFragment) getSupportFragmentManager().getFragment(savedInstanceState, "stepsDetailFragment");
+        }
     }
 
     @Override
@@ -49,10 +50,4 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
 }

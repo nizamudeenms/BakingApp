@@ -42,18 +42,28 @@ public class BakingAdapter extends RecyclerView.Adapter<BakingAdapter.RecipeView
         bakingCursor.moveToPosition(position);
         ImageView im = holder.bakingImage;
         String imageName = null;
+        imageName = "id" + bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_ID));
 
         holder.bakingItemName.setText(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_NAME)));
         holder.bakingServings.setText(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_SERVINGS)));
 
-        imageName = "id" + bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_ID));
-        Glide.with(rContext)
-                .load(rContext.getResources().getIdentifier(imageName, "mipmap", rContext.getPackageName()))
-                .placeholder(R.mipmap.ic_launcher)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade()
-                .thumbnail(0.5f)
-                .into(im);
+        if(!bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)).isEmpty()){
+            Glide.with(rContext)
+                    .load(bakingCursor.getString(bakingCursor.getColumnIndex(BakingContract.BakingEntry.COLUMN_BAKING_IMAGE)))
+                    .placeholder(R.mipmap.ic_launcher)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .crossFade()
+                    .thumbnail(0.5f)
+                    .into(im);
+        }else{
+            Glide.with(rContext)
+                    .load(rContext.getResources().getIdentifier(imageName, "mipmap", rContext.getPackageName()))
+                    .placeholder(R.mipmap.ic_launcher)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .crossFade()
+                    .thumbnail(0.5f)
+                    .into(im);
+        }
     }
 
     @Override

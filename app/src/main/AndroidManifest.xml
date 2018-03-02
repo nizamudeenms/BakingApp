@@ -21,8 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeDetailsActivity" android:configChanges="orientation|screenSize" />
-        <activity android:name=".RecipeStepsActivity"  android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".RecipeDetailsActivity"
+            android:launchMode="singleTop"
+            />
+        <activity
+            android:name=".RecipeStepsActivity"
+            android:launchMode="singleTop"
+            />
 
         <receiver android:name=".BakingAppWidget">
             <intent-filter>
@@ -34,6 +40,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/baking_app_widget_info" />
         </receiver>
+
         <service android:name=".BakingAppWidgetUpdateService" />
 
         <service

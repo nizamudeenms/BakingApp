@@ -3,29 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/exo_view_rel_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <!--<android.support.v4.widget.ContentLoadingProgressBar xmlns:android="http://schemas.android.com/apk/res/android"-->
-            <!--android:id="@+id/exo_player_progress_bar"-->
-            <!--style="?android:progressBarStyle"-->
-            <!--android:layout_width="50dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:backgroundTint="@color/colorPrimary"/>-->
-    <!--</RelativeLayout>-->
-
-    <!--<com.google.android.exoplayer2.ui.SimpleExoPlayerView-->
-        <!--android:id="@+id/exo_player_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:backgroundTint="@color/cardview_dark_background"/>-->
-
+    android:orientation="vertical"
+    android:id="@+id/ll_container">
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"

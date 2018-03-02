@@ -134,7 +134,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
@@ -156,7 +155,6 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
             stepsDetailFragment.setShortDesc(dataBundle.getString("shortDesc"));
             stepsDetailFragment.setDesc(dataBundle.getString("desc"));
             getSupportFragmentManager().beginTransaction().replace(R.id.step_detail_fragment_container, stepsDetailFragment).commit();
-
         } else {
             Intent intent = new Intent(this, RecipeDetailsActivity.class);
             intent.putExtras(dataBundle);
@@ -169,5 +167,4 @@ public class RecipeStepsActivity extends AppCompatActivity implements StepsFragm
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-
 }
